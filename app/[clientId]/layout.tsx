@@ -9,10 +9,12 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main style={{ width: '100%' }}>
-        {children}
-        <Footer />
-      </main>
+      <div className="flex w-full min-w-0">
+        <main className="flex-1 min-w-0 bg-background">
+          {children}
+          <Footer />
+        </main>
+      </div>
     </SidebarProvider>
   );
 }

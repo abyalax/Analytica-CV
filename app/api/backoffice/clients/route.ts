@@ -1,7 +1,6 @@
 import { SQL, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
-import { PERMISSIONS } from '~/common/const/permission';
 import { MetaResponse } from '~/common/types/meta';
 import { TResponse } from '~/common/types/response';
 import { paginate } from '~/db/helper';
@@ -9,8 +8,7 @@ import { clientRepository } from '~/db/repositories/clients.repository';
 import { BaseUser, userInsertSchema, users } from '~/db/schema';
 import { safeHandler } from '~/lib/handler/safe-handler';
 
-export const permissions = [PERMISSIONS.CLIENT.READ, PERMISSIONS.CLIENT.CREATE];
-
+export const permissions = [];
 export const GET = safeHandler(async (req): Promise<NextResponse<TResponse<{ data: BaseUser[]; meta: MetaResponse }>>> => {
   const pageParams = req.nextUrl.searchParams.get('page');
   const perPageParams = req.nextUrl.searchParams.get('per_page');

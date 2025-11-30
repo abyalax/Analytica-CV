@@ -1,11 +1,10 @@
 'use client';
 
-import { BoxIcon, ChevronRight, HelpCircle, Home, Inbox, LogOut, Notebook, Settings, UserCircle, Users } from 'lucide-react';
+import { Bookmark, ChevronRight, HelpCircle, Home, LogOut, Notebook, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ComponentType, SVGProps, useMemo, useState } from 'react';
-
 import { PERMISSIONS } from '~/common/const/permission';
 import { usePermissions } from '~/components/hooks/use-permissions';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
@@ -27,6 +26,7 @@ import {
   useSidebar,
 } from '~/components/ui/sidebar';
 import { cn } from '~/lib/utils';
+import { url } from '~/lib/utils/converter';
 
 export interface MenuItem {
   title: string;
@@ -47,83 +47,60 @@ export interface MenuGroup {
 
 const navigationItems = (clientId: string): MenuGroup[] => [
   {
-    group: 'Customer',
+    group: 'Client',
     items: [
       {
-        title: 'Beranda',
-        url: `/${clientId}/customer`,
+        title: 'Dashboard',
+        url: url('/[clientId]/dashboard', { clientId }),
         icon: Home,
-        permissions: [PERMISSIONS.CUSTOMER.READ_PROFILE],
+        permissions: [PERMISSIONS.CLIENT.READ_CV],
       },
       {
-        title: 'Orders',
-        url: `/${clientId}/customer/orders`,
-        icon: BoxIcon,
-        permissions: [PERMISSIONS.CUSTOMER.READ_ORDER],
+        title: 'Analyze CV',
+        url: url('/[clientId]/analyze', { clientId }),
+        icon: Bookmark,
+        permissions: [PERMISSIONS.CLIENT.BULK_ANALYZE], //  TODO:  Adjust to only ANALYZE
       },
       {
-        title: 'Profile',
-        url: `/${clientId}/customer/me/profile`,
-        icon: UserCircle,
-        permissions: [PERMISSIONS.CUSTOMER.READ_PROFILE],
+        title: 'Job Descriptions',
+        url: `/${clientId}/jobs`,
+        icon: Bookmark,
+        permissions: [PERMISSIONS.CLIENT.READ_JOBDESC],
+      },
+      {
+        title: 'History Analysis',
+        url: `/${clientId}/histories`,
+        icon: Bookmark,
+        permissions: [PERMISSIONS.CLIENT.READ_ANALYZE],
+      },
+      {
+        title: 'Saved CVs',
+        url: `/${clientId}/saved`,
+        icon: Bookmark,
+        permissions: [PERMISSIONS.CLIENT.READ_CV],
+      },
+      {
+        title: 'Manage CVs',
+        url: url('/[clientId]/cv', { clientId }),
+        icon: Bookmark,
+        permissions: [PERMISSIONS.CLIENT.READ_CV],
       },
     ],
   },
   {
-    group: 'Client Admin',
+    group: 'Admin',
     items: [
       {
         title: 'Beranda',
         url: `/${clientId}`,
         icon: Home,
-        permissions: [PERMISSIONS.CLIENT.READ],
-      },
-      {
-        title: 'Customer',
-        url: `/${clientId}/customer`,
-        icon: Users,
-        permissions: [PERMISSIONS.CLIENT.READ],
-      },
-      {
-        title: 'Orders',
-        url: `/${clientId}/customer/orders`,
-        icon: BoxIcon,
-        permissions: [PERMISSIONS.CLIENT.READ],
-      },
-      {
-        title: 'Profile',
-        url: `/${clientId}/customer/me/profile`,
-        icon: UserCircle,
-        permissions: [PERMISSIONS.CLIENT.READ],
-      },
-      {
-        title: 'Admin Customers',
-        url: `/${clientId}/admin/customers`,
-        icon: Inbox,
-        permissions: [PERMISSIONS.CLIENT.READ],
+        permissions: [PERMISSIONS.ADMIN.READ_CLIENT],
       },
       {
         title: 'Admin',
         url: `/${clientId}/admin`,
         icon: Notebook,
-        permissions: [PERMISSIONS.CLIENT.READ],
-      },
-    ],
-  },
-  {
-    group: 'System Admin',
-    items: [
-      {
-        title: 'Beranda',
-        url: '/backoffice',
-        icon: Home,
-        permissions: [PERMISSIONS.CLIENT.READ],
-      },
-      {
-        title: 'Clients',
-        url: '/backoffice',
-        icon: Users,
-        permissions: [PERMISSIONS.CLIENT.READ],
+        permissions: [PERMISSIONS.ADMIN.READ_CLIENT],
       },
     ],
   },
@@ -187,7 +164,7 @@ export function AppSidebar({ user = { name: 'John Doe', email: 'john@example.com
         <div className="flex items-center gap-3">
           {state !== 'collapsed' && (
             <div className="flex flex-col min-w-0">
-              <span className="font-semibold text-sm truncate">Next Boilerplate</span>
+              <span className="font-semibold text-sm truncate">Analytica CVs</span>
               <span className="text-xs text-muted-foreground">v1.0.0</span>
             </div>
           )}
@@ -198,7 +175,9 @@ export function AppSidebar({ user = { name: 'John Doe', email: 'john@example.com
         {/* Main Navigation Groups */}
         {filteredNavigations.map((section) => (
           <SidebarGroup key={section.group}>
-            <SidebarGroupLabel className="px-4 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">{section.group}</SidebarGroupLabel>
+            <SidebarGroupLabel className="px-4 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              {section.group}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {section.items.map((item) => {
@@ -208,11 +187,11 @@ export function AppSidebar({ user = { name: 'John Doe', email: 'john@example.com
                   // Permission checking is now handled at the navigation filtering level
 
                   return (
-                    <SidebarMenuItem key={item.title}>
+                    <SidebarMenuItem key={item.title} className="my-0.5">
                       <SidebarMenuButton
                         asChild={!hasSubmenu}
                         className={cn(
-                          'w-full justify-start px-4 py-2 hover:bg-accent hover:text-accent-foreground transition-colors',
+                          'w-full justify-start px-4 py-6 hover:bg-accent hover:text-accent-foreground transition-colors',
                           itemIsActive && 'bg-accent text-accent-foreground font-medium',
                         )}
                         onClick={hasSubmenu ? () => toggleExpanded(item.title) : undefined}

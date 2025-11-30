@@ -25,9 +25,6 @@ export const ClientsTable = () => {
       columnIds={columnIds}
       onClickRow={(data) => console.log(data.original)}
       enableFeature={{
-        search: {
-          fieldSearchable: 'name',
-        },
         columnVisibilitySelector: {
           initialColumnVisibility,
         },

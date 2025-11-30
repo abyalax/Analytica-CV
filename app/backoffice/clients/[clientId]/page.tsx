@@ -4,7 +4,7 @@ import { getQueryClient } from '~/lib/query/client';
 import { queryGetClientByID } from '../_hooks/use-get-client-by-id';
 import { Component } from './_components';
 
-export const permissions = [PERMISSIONS.CLIENT.READ];
+export const permissions = [PERMISSIONS.ADMIN.READ_CLIENT];
 
 const breadcrumbItems = (clientId: string) => [
   {

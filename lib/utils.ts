@@ -1,6 +1,7 @@
 import { rankItem } from '@tanstack/match-sorter-utils';
-import type { FilterFn } from '@tanstack/react-table';
+import type { FilterFn, Header } from '@tanstack/react-table';
 import { type ClassValue, clsx } from 'clsx';
+import { CSSProperties } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -52,4 +53,18 @@ export const formatCurrency = (value: string) => {
     style: 'currency',
     currency: 'IDR',
   }).format(intValue);
+};
+
+export const createStickyColumnStyleOld = <TData, TValue>(freezeIds: string[]) => {
+  return (header: Header<TData, TValue>, scrollLeft: number): CSSProperties => {
+    const id = header.column.id;
+    if (!freezeIds.includes(id)) return {};
+
+    return {
+      position: 'sticky' as const,
+      left: header.getStart(), // built-in offset FIX
+      zIndex: 40,
+      background: 'white',
+    };
+  };
 };

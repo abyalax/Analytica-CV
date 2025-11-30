@@ -1,50 +1,10 @@
 Contoh use case penggunaan boilerplate
 
 ```
-  Platform dengan konsep multi-tenant di mana setiap toko (client) memiliki ruang terisolasi untuk mengelola aplikasi POS mereka sendiri, termasuk produk, customer, dan transaksi. Tenant diidentifikasi dengan parameter clientId pada URL sehingga seluruh rute aplikasi, baik untuk admin toko maupun customer, selalu berada dalam scope client tertentu. Struktur routing dipisahkan menjadi tiga lapisan utama: public routes untuk landing, pricing, dan order setup; tenant routes yang terbagi menjadi admin (/[clientId]/admin/...) untuk mengelola data toko dan customer (/[clientId]/me/... atau /[clientId]/orders/...) untuk aktivitas pengguna akhir; serta backoffice routes (/backoffice/...) untuk super admin yang mengawasi seluruh tenant. Dengan pola ini, data dan akses setiap tenant tetap terisolasi namun dapat dikelola secara terpusat.
+  Platform dengan konsep multi-tenant di mana setiap toko (client) memiliki ruang terisolasi untuk mengelola aplikasi POS mereka sendiri, termasuk produk, CV, dan transaksi. Tenant diidentifikasi dengan parameter clientId pada URL sehingga seluruh rute aplikasi, baik untuk admin toko maupun CV, selalu berada dalam scope client tertentu. Struktur routing dipisahkan menjadi tiga lapisan utama: public routes untuk landing, pricing, dan order setup; tenant routes yang terbagi menjadi admin (/[clientId]/admin/...) untuk mengelola data toko dan CV (/[clientId]/me/... atau /[clientId]/orders/...) untuk aktivitas pengguna akhir; serta backoffice routes (/backoffice/...) untuk super admin yang mengawasi seluruh tenant. Dengan pola ini, data dan akses setiap tenant tetap terisolasi namun dapat dikelola secara terpusat.
 ```
 
-Urutan Access : Guest => Customer => Client Admin => System Admin
-
-```ts
-const pathnames = [
-  // Public
-  "/", // landing page
-  "/pricing", // pricing
-  "/order", // order POS app (request setup)
-
-  // Auth
-  "/admin/auth/login", // login client admin
-  "/admin/auth/register", // register client admin
-
-  "/[clientId]/auth/login", // login customer ke client Admin
-  "/[clientId]/auth/register", // register customer ke client Admin
-
-  // Customer (scoped by clientId)
-  "/[clientId]/customer/me/profile", // profile view
-  "/[clientId]/customer/me/profile/update", // update profile
-
-  "/[clientId]/customer/orders", // list orders
-  "/[clientId]/customer/orders/[orderId]", // detail order
-
-  // Client Admin (tenant side)
-  "/[clientId]/admin", // dashboard
-  "/[clientId]/admin/customers", // list customers
-  "/[clientId]/admin/customers/create", // create customer
-  "/[clientId]/admin/customers/[customerId]", // detail customer
-  "/[clientId]/admin/customers/[customerId]/edit", // update customer
-
-  // Backoffice (super admin)
-  "/backoffice",
-  "/backoffice/clients",
-  "/backoffice/clients/create", // create client
-  "/backoffice/clients/[clientId]", // detail client
-  "/backoffice/clients/[clientId]/edit", // update client
-  "/backoffice/clients/[clientId]/customers",
-  "/backoffice/clients/[clientId]/customers/[customerId]",
-  "/backoffice/clients/[clientId]/customers/[customerId]/edit",
-];
-```
+Urutan Access : Guest => CV => Client Admin => System Admin
 
 ## Available Scripts
 
@@ -74,7 +34,7 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
   Setiap file `app/**/page.tsx` atau `app/**/route.ts` bisa mengekspor
 
   ```ts
-  export const permissions = [PERMISSIONS.CUSTOMER.READ, ...]`.
+  export const permissions = [PERMISSIONS.CV.READ, ...]`.
   ```
 
 - **Auto-generate path permissions**:
@@ -104,7 +64,7 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
 
    ```ts
    // app/admin/page.tsx
-   export const permissions = [PERMISSIONS.CUSTOMER.READ, PERMISSIONS.CUSTOMER.UPDATE ]`. // halaman ini butuh keduanya
+   export const permissions = [PERMISSIONS.CV.READ, PERMISSIONS.CV.UPDATE ]`. // halaman ini butuh keduanya
 
    export default function Page() {
    return <div>Admin</div>;
@@ -121,8 +81,8 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
    // example guard permissions, but does'nt support per method security
    // all handler will be protected to this permission
    export const permissions = [
-     PERMISSIONS.CUSTOMER.READ,
-     PERMISSIONS.CUSTOMER.UPDATE,
+     PERMISSIONS.CV.READ,
+     PERMISSIONS.CV.UPDATE,
    ];
 
    export const GET = safeHandler(async () => {

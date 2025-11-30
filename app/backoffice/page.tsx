@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   keywords: 'admin, dashboard, management, users, settings',
 };
 
-export const permissions = [PERMISSIONS.CLIENT.READ];
+export const permissions = [PERMISSIONS.ADMIN.READ_CLIENT];
 
 const breadcrumbItems = [
   {

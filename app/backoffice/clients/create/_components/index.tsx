@@ -1,11 +1,9 @@
 'use client';
 
 import { FC } from 'react';
-
 import { ROLEIDS } from '~/common/const/permission';
 import { Flex } from '~/components/layouts/flex';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
-
 import { FormClient } from '../../_components/form';
 import { FormDataClient } from '../../_components/form/schema';
 import { useCreateClient } from '../../_hooks/use-create-client';
@@ -15,8 +13,10 @@ export const Component: FC = () => {
 
   const handleSubmit = (data: FormDataClient) => {
     mutate({
-      ...data,
-      roleId: ROLEIDS['Client Admin'],
+      name: data.name,
+      password: data.password,
+      email: data.email,
+      roleId: ROLEIDS.Client,
     });
   };
 

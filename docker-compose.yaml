@@ -1,13 +1,11 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:15
-    restart: always
+    restart: no
     environment:
-      POSTGRES_USER: cv-postgres
-      POSTGRES_PASSWORD: cv-postgres
-      POSTGRES_DB: db_cv_match
+      POSTGRES_USER: analitica
+      POSTGRES_PASSWORD: analitica
+      POSTGRES_DB: db_analitica_cv
     ports:
       - "5432:5432"
     volumes:

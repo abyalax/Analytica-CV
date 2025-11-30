@@ -1,3 +1,4 @@
+export * from './schema/cv/cv.schema';
 export * from './schema/users/permissions.schema';
 export * from './schema/users/role-permissions.schema';
 export * from './schema/users/roles.schema';

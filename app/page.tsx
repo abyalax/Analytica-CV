@@ -5,8 +5,8 @@ import { env } from '~/common/const/credential';
 import { PageLanding } from './_components/page-landing';
 
 export const metadata: Metadata = {
-  title: "Abya's Profile",
-  description: "Explore Abya's personal website showcasing development projects, technical blogs, and more.",
+  title: "Abya's AnaliticaCV",
+  description: 'Your personal analytics dashboard for CVs.',
   authors: [{ name: 'Abya Lacks', url: env.NEXT_PUBLIC_BASE_URL_API }],
   keywords: ['Profile Developer', 'Personal Website', 'Fullstack Developer', 'Abya Lacks', 'Software Engineer Portfolio'],
   creator: 'Abya Lacks',

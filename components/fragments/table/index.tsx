@@ -2,45 +2,68 @@
 'use client';
 
 import type { ColumnDef, PaginationState, Row, SortingState, Updater } from '@tanstack/react-table';
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { FunnelPlus } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
-
 import { MetaResponse, metaRequestSchema } from '~/common/types/meta';
 import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
 import { useNavigate } from '~/components/hooks/use-navigate';
 import { useSearch } from '~/components/hooks/use-search';
 import { Flex } from '~/components/layouts/flex';
+import { Col, Row as RowComponent } from '~/components/layouts/grid';
+import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Pill } from '~/components/ui/pill';
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
-import { TableBody, TableCell, Table as TableComponent, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table';
+import {
+  TableBody,
+  TableCell,
+  Table as TableComponent,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '~/components/ui/table';
 import { TablePagination } from '~/components/ui/table-pagination';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { createFuzzyFilter } from '~/lib/utils';
+import { useCreateStickyColumnStyle } from './_hooks/use-freeze-style';
+import { useScrollLeft } from './_hooks/use-scroll-left';
 import { ColumnVisibilitySelector } from './_ui/column-visibility';
 
 export type EngineSide = 'client_side' | 'server_side';
 
-type EnableFeature<T> = {
-  search?: { fieldSearchable: keyof T; debounceSearch?: number };
+type EnableFeature<T = unknown> = {
   virtualizer?: { virtualizeAt: number };
   columnVisibilitySelector?: {
-    initialColumnVisibility: Record<string, boolean>;
+    initialColumnVisibility: Record<keyof T, boolean>;
   };
   engineSide?: EngineSide;
   pagination?: {
     perPageOptions?: number[];
     initialState?: PaginationState;
   };
-  menufilter?: ReactNode;
+  menufilter?: ReactNode[];
 };
 
 export type TableProps<T> = {
   enableFeature: EnableFeature<T>;
   columns: ColumnDef<T, any>[];
   columnIds: (string | undefined)[];
+  freezeColumnIds?: string[];
   data?: { data: T[]; meta: MetaResponse };
+  topActions?: ReactNode;
   onClickRow: (data: Row<T>, e?: MouseEvent) => void;
 };
 
@@ -52,7 +75,7 @@ const defaultFeature: EnableFeature<any> = {
   },
 };
 
-export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props }: TableProps<T>) => {
+export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TableProps<T>) => {
   const [engine] = useState<EngineSide>(enableFeature.engineSide ?? 'client_side');
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -62,9 +85,9 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const fuzzyFilter = createFuzzyFilter<T>();
+  const filterFns = { fuzzy: fuzzyFilter };
   const parentRef = useRef<HTMLDivElement>(null);
   const search = useSearch(metaRequestSchema);
-
   const navigate = useNavigate();
 
   const isClientControl = engine === 'client_side';
@@ -72,8 +95,12 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
 
   const pageIndex = isServerControl ? Number(search.page ?? 1) - 1 : pagination.pageIndex;
   const pageSize = isServerControl ? Number(search.per_page ?? 10) : pagination.pageSize;
-  const debounceSearch = enableFeature.search?.debounceSearch ?? 800;
-  const filterFns = { fuzzy: fuzzyFilter };
+
+  /**freezing columns */
+  const stickyStyle = useCreateStickyColumnStyle<T, unknown>(props.freezeColumnIds ?? []);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const scrollLeft = useScrollLeft(scrollRef);
+  const { theme } = useTheme();
 
   const serverSearch = useDebouncedCallback((value: string) => {
     navigate({
@@ -86,11 +113,11 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
       viewTransition: true,
     });
     setGlobalFilter(value);
-  }, debounceSearch);
+  }, 500);
 
   const clientSearch = useDebouncedCallback((value: string) => {
     setGlobalFilter(value);
-  }, debounceSearch);
+  }, 500);
 
   const onPaginationChange = (updater: Updater<PaginationState>) => {
     const next = typeof updater === 'function' ? updater({ pageIndex, pageSize }) : updater;
@@ -123,7 +150,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
     /**Common */
     data: props.data?.data || [],
     columns: props.columns,
-    debugTable: true,
+    debugTable: false,
     enableRowSelection: true,
     enableMultiRowSelection: true,
     enableGlobalFilter: true,
@@ -188,77 +215,152 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
   }, [isClientControl, search]);
 
   return (
-    <div className="p-10 rounded-sm my-10 bg-sidebar">
-      <div className="flex items-center justify-between">
-        {enableFeature.menufilter}
-        {enableFeature.search && (
+    <main className="w-full">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex gap-4">
+          {enableFeature.menufilter && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button className="cusrsor-pointer" variant={'outline'}>
+                  <FunnelPlus />
+                  Filter
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" style={{ width: 'fit-content' }}>
+                <RowComponent cols={enableFeature.menufilter.length > 1 ? 2 : 1}>
+                  {enableFeature.menufilter.map((item, index) => (
+                    <Col span={1} key={index}>
+                      {item}
+                    </Col>
+                  ))}
+                </RowComponent>
+              </PopoverContent>
+            </Popover>
+          )}
           <Flex gap={'md'} align={'center'} justify={'center'} style={{ width: 300 }}>
-            <Input placeholder="Search..." value={globalFilter ?? ''} onChange={(e) => setGlobalFilter(e.target.value)} />
+            <Input
+              placeholder="Search..."
+              value={globalFilter ?? ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              style={{ backgroundColor: 'white' }}
+            />
           </Flex>
-        )}
-        <Pill onRemove={() => table.resetRowSelection()} selectedCount={selectedRows.length} />
-        {enableFeature.columnVisibilitySelector?.initialColumnVisibility && <ColumnVisibilitySelector table={table} columnIds={props.columnIds} />}
+          <Pill onRemove={() => table.resetRowSelection()} selectedCount={selectedRows.length} />
+        </div>
+        <Flex gap={8} align={'center'}>
+          {props.topActions}
+          {enableFeature.columnVisibilitySelector?.initialColumnVisibility && (
+            <ColumnVisibilitySelector table={table} columnIds={props.columnIds} />
+          )}
+        </Flex>
       </div>
-      <TableComponent>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.index} colSpan={header.colSpan}>
-                  <div onClick={header.column.getToggleSortingHandler()}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    {{
-                      asc: <FaArrowUp style={{ margin: '0 5px' }} />,
-                      desc: <FaArrowDown style={{ margin: '0 5px' }} />,
-                    }[header.column.getIsSorted() as string] ?? null}
-                  </div>
-                </TableHead>
+      <div ref={scrollRef} className="overflow-x-auto w-full">
+        <div className="relative">
+          <TableComponent className="bg-background rounded-md min-w-full">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    const style = stickyStyle(header, scrollLeft, theme);
+                    const isAccessor = header.column.accessorFn !== undefined;
+                    return (
+                      <TableHead
+                        style={style}
+                        key={header.index}
+                        colSpan={header.colSpan}
+                        className="h-14 cursor-pointer relative"
+                      >
+                        {isAccessor ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div
+                                onClick={header.column.getToggleSortingHandler()}
+                                style={{ display: 'flex', justifyContent: 'space-between' }}
+                              >
+                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                {{
+                                  asc: <FaArrowUp style={{ margin: '0 5px' }} />,
+                                  desc: <FaArrowDown style={{ margin: '0 5px' }} />,
+                                }[header.column.getIsSorted() as string] ?? null}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {(() => {
+                                const sorted = header.column.getIsSorted();
+
+                                if (sorted === false || sorted == null) return 'Sort Ascending';
+                                if (sorted === 'asc') return 'Sort Descending';
+                                if (sorted === 'desc') return 'Unsort by this column';
+
+                                return 'Sort by this column';
+                              })()}
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : header.isPlaceholder ? null : (
+                          flexRender(header.column.columnDef.header, header.getContext())
+                        )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
               ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.length > (enableFeature.virtualizer?.virtualizeAt as number)
-            ? virtualizer.getVirtualItems().map((virtualRow, index) => {
-                const rows = table.getRowModel().rows;
-                const row = rows[virtualRow.index];
-                return (
-                  <TableRow
-                    data-state={row.getIsSelected() && 'selected'}
-                    className="bg-red-500"
-                    onClick={(e) => onClickRow(row, e)}
-                    key={virtualRow.key}
-                    style={{
-                      height: `${virtualRow.size}px`,
-                      transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })
-            : table.getRowModel().rows.map((row: Row<any>) => (
-                <TableRow onClick={(e) => onClickRow(row, e)} style={{ cursor: 'pointer' }} key={row.id}>
-                  {row.getVisibleCells().map((cell, index) => (
-                    <TableCell key={index}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length > (enableFeature.virtualizer?.virtualizeAt as number)
+                ? virtualizer.getVirtualItems().map((virtualRow, index) => {
+                    const rows = table.getRowModel().rows;
+                    const row = rows[virtualRow.index];
+                    return (
+                      <TableRow
+                        data-state={row.getIsSelected() && 'selected'}
+                        className="bg-red-500"
+                        onClick={(e) => props.onClickRow(row, e)}
+                        key={virtualRow.key}
+                        style={{
+                          height: `${virtualRow.size}px`,
+                          transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
+                        }}
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
+                          const style = stickyStyle(headerForCell, scrollLeft, theme);
+                          return (
+                            <TableCell style={style} className="h-14 relative bg-background" key={cell.id}>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+                : table.getRowModel().rows.map((row: Row<any>) => (
+                    <TableRow onClick={(e) => props.onClickRow(row, e)} style={{ cursor: 'pointer' }} key={row.id}>
+                      {row.getVisibleCells().map((cell, index) => {
+                        const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
+                        const style = stickyStyle(headerForCell, scrollLeft, theme);
+                        return (
+                          <TableCell style={style} className="h-14 relative bg-background" key={index}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+            </TableBody>
+            <TableFooter className="bg-transparent">
+              {table.getFooterGroups().map((footerGroup) => (
+                <TableRow key={footerGroup.id}>
+                  {footerGroup.headers.map((header) => (
+                    <TableHead key={header.index}>{flexRender(header.column.columnDef.footer, header.getContext())}</TableHead>
                   ))}
                 </TableRow>
               ))}
-        </TableBody>
-        <TableFooter className="bg-transparent">
-          {table.getFooterGroups().map((footerGroup) => (
-            <TableRow key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <TableHead key={header.index}>{flexRender(header.column.columnDef.footer, header.getContext())}</TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableFooter>
-      </TableComponent>
+            </TableFooter>
+          </TableComponent>
+        </div>
+      </div>
       {enableFeature.pagination && (
-        <Flex direction="column" gap={20}>
+        <Flex direction="column" gap={20} className="bg-background rounded-md p-5">
           <Flex>
             <div className="flex items-center justify-between mt-4">
               <div className="flex flex-col gap-2">
@@ -313,6 +415,6 @@ export const Table = <T,>({ enableFeature = defaultFeature, onClickRow, ...props
           </Flex>
         </Flex>
       )}
-    </div>
+    </main>
   );
 };
