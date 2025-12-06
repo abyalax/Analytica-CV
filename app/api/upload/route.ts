@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { NextResponse } from 'next/server';
 import { TResponse } from '~/common/types/response';
-import { CV } from '~/db/schema';
 import { safeHandler } from '~/lib/handler/safe-handler';
 import { extractFiles } from '~/lib/request/formidable';
 
@@ -12,7 +11,8 @@ export const config = {
   },
 };
 
-export const POST = safeHandler(async (req): Promise<NextResponse<TResponse<CV>>> => {
+export const POST = safeHandler(async (req): Promise<NextResponse<TResponse>> => {
+  // todo: save identitfier file to clientId data
   try {
     const { files } = await extractFiles(req);
 
@@ -33,28 +33,9 @@ export const POST = safeHandler(async (req): Promise<NextResponse<TResponse<CV>>
       uploadedFiles.push(`/uploads/${file.originalFilename ?? `${new Date().toString}`}`);
     }
 
-    // todo: extract file cv and store data extracted to db
-
-    const data: CV = {
-      id: 0,
-      name: '',
-      email: '',
-      userId: 0,
-      address: '',
-      linkedin: null,
-      about: '',
-      interest: [],
-      skill: [],
-      education: [],
-      experience: null,
-      projects: null,
-      certificate: [],
-    };
-
     return NextResponse.json({
       success: true,
-      data,
-      message: 'Files extracted successfully',
+      message: 'Files uploaded successfully',
     });
   } catch (error) {
     console.error('Upload error:', error);

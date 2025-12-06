@@ -2,33 +2,33 @@
 
 import { Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { TFile, Upload } from '~/components/fragments/input/upload';
-import { useUploadFiles } from '~/components/hooks/use-upload';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Progress } from '~/components/ui/progress';
 import { P } from '~/components/ui/typography';
-import { endpoint } from '~/lib/utils/converter';
+import { useExtractCV } from '../_hooks/use-extract-cv';
 
 export const Component: FC = () => {
   const [files, setFiles] = useState<TFile[]>([]);
   const [analyzing, setAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
   const { clientId } = useParams<{ clientId: string }>();
-  const { upload } = useUploadFiles();
+  const { extract, data } = useExtractCV(clientId);
+
+  const extracted = data?.data.data;
 
   const handleFilesChange = (files: TFile[]) => {
     console.log(files);
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (files.length === 0) return;
     setAnalyzing(true);
     setProgress(0);
-    upload(
+    extract(
       {
-        endpoint: endpoint('/api/[clientId]/cv/analyze', { clientId }),
         files: files.map((file) => file.file),
         onProgress: (progress) => setProgress(progress),
       },
@@ -73,6 +73,13 @@ export const Component: FC = () => {
           )}
         </Button>
       </div>
+
+      {Array.isArray(extracted) && extracted.length > 0 && (
+        <div className="mt-6">
+          <P>Extracted {extracted.length} CV</P>
+          <pre>{JSON.stringify(extracted, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 };

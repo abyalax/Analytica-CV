@@ -1,5 +1,5 @@
 import { dehydrate } from '@tanstack/react-query';
-import './globals.css';
+import './styles/index.css';
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';

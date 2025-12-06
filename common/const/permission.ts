@@ -26,6 +26,11 @@ export const PERMISSIONS = {
     READ_JOBDESC: 'jobdesc:read',
     UPDATE_JOBDESC: 'jobdesc:update',
     DELETE_JOBDESC: 'jobdesc:delete',
+
+    READ_HISTORIES: 'histories:read',
+    UPDATE_HISTORIES: 'histories:update',
+    CREATE_HISTORIES: 'histories:create',
+    DELETE_HISTORIES: 'histories:delete',
   },
   ADMIN: {
     READ_CLIENT: 'client:read',

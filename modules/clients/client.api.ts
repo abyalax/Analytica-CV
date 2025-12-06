@@ -5,7 +5,6 @@ import { api } from '~/lib/axios/api';
 import { CreateUser, UpdateUser, User } from '../../db/schema/users/users.schema';
 
 export const getClients = async (params: MetaRequest<User>): Promise<TAxiosResponse<{ data: User[]; meta: MetaResponse }>> => {
-  console.log(params);
   return api.get(`/backoffice/clients`, { params: params });
 };
 

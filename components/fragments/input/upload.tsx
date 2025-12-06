@@ -26,7 +26,6 @@ const getStatusIcon = (status: TFile['status']) => {
 };
 
 const getStatusColor = (status: TFile['status']) => {
-  console.log(status);
   switch (status) {
     case 'uploading':
       return 'border-blue-500';

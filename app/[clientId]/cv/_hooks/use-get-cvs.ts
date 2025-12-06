@@ -3,7 +3,7 @@ import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { QUERY_KEY } from '~/common/const/querykey';
 import { MetaRequest } from '~/common/types/meta';
 import { CV } from '~/db/schema';
-import { getCVs } from '~/modules/cvs/cv.api';
+import { getCVs } from '~/modules/cv/cv.api';
 
 export const queryGetCVs = (clientId: string, params: MetaRequest<CV>) =>
   queryOptions({

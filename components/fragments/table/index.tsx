@@ -259,7 +259,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
           <TableComponent className="bg-background rounded-md min-w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="cursor-pointer bg-background hover:bg-secondary/50">
                   {headerGroup.headers.map((header) => {
                     const style = stickyStyle(header, scrollLeft, theme);
                     const isAccessor = header.column.accessorFn !== undefined;
@@ -313,7 +313,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
                     return (
                       <TableRow
                         data-state={row.getIsSelected() && 'selected'}
-                        className="bg-red-500"
+                        className="cursor-pointer bg-background hover:bg-secondary"
                         onClick={(e) => props.onClickRow(row, e)}
                         key={virtualRow.key}
                         style={{
@@ -334,12 +334,17 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
                     );
                   })
                 : table.getRowModel().rows.map((row: Row<any>) => (
-                    <TableRow onClick={(e) => props.onClickRow(row, e)} style={{ cursor: 'pointer' }} key={row.id}>
+                    <TableRow
+                      className="bg-background hover:bg-secondary"
+                      onClick={(e) => props.onClickRow(row, e)}
+                      style={{ cursor: 'pointer' }}
+                      key={row.id}
+                    >
                       {row.getVisibleCells().map((cell, index) => {
                         const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
                         const style = stickyStyle(headerForCell, scrollLeft, theme);
                         return (
-                          <TableCell style={style} className="h-14 relative bg-background" key={index}>
+                          <TableCell style={style} className="h-14 relative" key={index}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
                         );
