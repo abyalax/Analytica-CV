@@ -33,7 +33,7 @@ export function safeHandler<TParams extends Record<string, unknown>>(handler: Ha
           return NextResponse.json({ message: res.message, error: res.error }, { status: res.status });
         }
       }
-      console.error('[Unhandled Error]: ', err);
+      console.error('[Unhandle Error]: ', err);
       return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
   };

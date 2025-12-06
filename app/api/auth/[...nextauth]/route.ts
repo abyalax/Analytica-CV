@@ -46,7 +46,6 @@ const options: AuthOptions = {
       async authorize(credentials) {
         if (credentials?.email && credentials?.password) {
           const user = await userRepository.rawFindFirst(eq(users.email, credentials?.email));
-          console.log({ user });
           if (user === undefined) throw new NotFoundException('User not found');
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) throw new UnauthorizedException('Invalid Password');

@@ -1,10 +1,55 @@
-Contoh use case penggunaan boilerplate
 
-```
-  Platform dengan konsep multi-tenant di mana setiap toko (client) memiliki ruang terisolasi untuk mengelola aplikasi POS mereka sendiri, termasuk produk, CV, dan transaksi. Tenant diidentifikasi dengan parameter clientId pada URL sehingga seluruh rute aplikasi, baik untuk admin toko maupun CV, selalu berada dalam scope client tertentu. Struktur routing dipisahkan menjadi tiga lapisan utama: public routes untuk landing, pricing, dan order setup; tenant routes yang terbagi menjadi admin (/[clientId]/admin/...) untuk mengelola data toko dan CV (/[clientId]/me/... atau /[clientId]/orders/...) untuk aktivitas pengguna akhir; serta backoffice routes (/backoffice/...) untuk super admin yang mengawasi seluruh tenant. Dengan pola ini, data dan akses setiap tenant tetap terisolasi namun dapat dikelola secara terpusat.
-```
+# Technical Business
 
-Urutan Access : Guest => CV => Client Admin => System Admin
+Analitica CV adalah Software as A Service yang berfungsi untuk melakukan analisis pada banyak CV di perusahaan sekaligus.
+Di balik layar software ini menerapkan teknologi RAG dan Multi Agent AI untuk melakukan analisis dokumen CV.
+
+Flow Apps
+
+- HRD memasukkan data internal perusahaan sebagai pengetahuan dasar AI, seperti kultur perusahaan, budaya kerja, agile, scrumbs, etc.
+- Sistem melakukan ekstraksi dokumen ini untuk dijadikan base knowledge perusahaan.
+- HRD memasukkan job description pada lowongan yang terbuka.
+
+- HRD membuat agent ai spesific pada job description atau posisi yang akan di carikan kandidat, 
+    misalkan posisi frontend engineer, maka di posisi ini setidaknya ada satu agent ai yang expert dan akan terlatih di domain ini. namun HRD juga availbale untuk membuat agent lagi di posisi ini dengan job desc berbeda, misalkan junior frontend engineer dan senior frontend engineer.
+
+- HRD upload banyak CV ke dalam sistem, kemudian sistem akan melakukan ekstraksi pada data CV (format pdf).
+    sistem akan menyimpan data hasil ekstraksi ini ke database beserta file pdf nya
+    
+    ```
+    Flow PDF CV Extraction
+
+    PDF -> Image
+    Layout Detection Model ( Detectron2 / LayoutParser )
+    OCR ( PaddleOCR atau Tesseract )
+    NER Model ( LayoutLMv3 )
+    Rule-based CV Section Extractor
+    Return stuctured JSON Ready To Use
+    ```
+
+- HRD dapat memilih cv yang akan di lakukan analisis, 
+    setiap cv yang sudah pernah di analsis akan di simpan hasilnnya, dan hasilnya ini akan related ke data cv nya (melekat), 
+    satu CV hanya bisa di analisis satu kali ( re analisis dilakukan di next development ).
+
+- Sistem akan melakukan analisis data CV ( hasil ekstraksi ) 
+    Sistem akan mencari dokumen internal perusahaan untuk mencari pengetahuan related terlebih dahulu seperti histori penilaian cv, culture perusahaan, dsb ( proses RAG berada disini )
+    Sistem akan menampilkan dalam bentuk ranking ke HRD berdasarkan match by AI agent di job desc tertentu ( selected by HRD ).
+
+- Berdasarkan hasil analisa ini HRD juga dapat melakukan chatting ke Agent AI untuk berdiskusi tentang CV terbaik.
+    chats ini akan disimpan oleh sistem sehingga obrolan dapat di lanjut tanpa kehilangan context.
+
+saya butuh untuk design schema table databasenya
+cv
+sessions
+users (already exists, we just need to create relations)
+agents
+knowledge_base (data internal perusahaan) => not priority, next development aja
+knowledge_ (for RAG) => next development
+
+
+
+
+# Technical Code
 
 ## Available Scripts
 

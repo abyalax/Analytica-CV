@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { QUERY_KEY } from '~/common/const/querykey';
 import { TResponse } from '~/common/types/response';
-import { deleteCV } from '~/modules/cvs/cv.api';
+import { deleteCV } from '~/modules/cv/cv.api';
 
 export const useDeleteCV = (clientId: string) => {
   return useMutation({

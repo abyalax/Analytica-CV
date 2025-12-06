@@ -22,7 +22,7 @@ type EndpointParamsObject<T extends AppRouteHandlerRoutes> = ExtractParams<T> ex
  * url('/[clientId]/cv/[cvId]', { clientId: '1', cvId: '88' })
  * => "/2/cv/88"
  */
-export function url<T extends AppRoutes>(url: T, params: URLParamsObject<T>): string {
+export function url<T extends AppRoutes>(url: T, params?: URLParamsObject<T>): string {
   //@ts-expect-error
   return url.replace(/\[(.*?)\]/g, (_, key) => params[key]);
 }

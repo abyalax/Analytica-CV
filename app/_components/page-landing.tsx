@@ -2,14 +2,25 @@
 
 import { ArrowRight, BarChart3, Brain, CheckCircle, Sparkles, Upload } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Footer } from '~/components/ui/footer';
 import { Navbar } from '~/components/ui/navbar';
-import { H2, P } from '~/components/ui/typography';
+import { url } from '~/lib/utils/converter';
 import { navigationGuest } from '../navigation';
 
 export function PageLanding() {
+  const { status, data } = useSession();
+  const { push } = useRouter();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <>
+  useEffect(() => {
+    if (status === 'authenticated') {
+      push(url('/[clientId]/dashboard', { clientId: String(data.user.id) }));
+    }
+  }, []);
   return (
     <section className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <Navbar navigation={navigationGuest} />
@@ -130,10 +141,10 @@ export function PageLanding() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-white">
+      <section className="py-20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Siap Meningkatkan Proses Rekrutmen Anda?</h2>
-          <p className="text-lg mb-8 text-white/90 max-w-2xl mx-auto">
+          <p className="text-lg mb-8 max-w-2xl mx-auto">
             Bergabunglah dengan perusahaan-perusahaan yang sudah mempercayai CVAnalyzer untuk proses rekrutmen mereka.
           </p>
           <Link href="/login">
@@ -144,46 +155,6 @@ export function PageLanding() {
           </Link>
         </div>
       </section>
-
-      {/* Features */}
-      <main className="px-8 py-20 max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <Card>
-          <CardContent className="p-6 space-y-3">
-            <H2 className="text-xl font-semibold">Multi-Tenant</H2>
-            <P className="text-[var(--text-secondary)]">
-              Each has isolated data: products, cv, transactions are secure and private.
-            </P>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 space-y-3">
-            <H2 className="text-xl font-semibold">Scalable</H2>
-            <P className="text-[var(--text-secondary)]">
-              Grow your business without limits. Easily add more users, products, and transactions.
-            </P>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 space-y-3">
-            <H2 className="text-xl font-semibold">Secure</H2>
-            <P className="text-[var(--text-secondary)]">Data protection is our priority. Your data is safe with us.</P>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 space-y-3">
-            <H2 className="text-xl font-semibold">CV Management</H2>
-            <P className="text-[var(--text-secondary)]">Register CV, track shopping history, and increase loyalty.</P>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 space-y-3">
-            <H2 className="text-xl font-semibold">Produk & Inventory</H2>
-            <P className="text-[var(--text-secondary)]">
-              Upload products, manage stock, and synchronize multiple branches easily.
-            </P>
-          </CardContent>
-        </Card>
-      </main>
 
       <Footer />
     </section>

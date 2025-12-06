@@ -1,22 +1,20 @@
 import { AxiosProgressEvent } from 'axios';
 import { api } from './api';
 
-interface UploadFilesOptions {
+export interface UploadFilesOptions {
   files: (File | undefined)[];
   endpoint: string;
   onProgress?: (progress: number) => void;
 }
 
-interface UploadResponse {
+export interface UploadResponse {
   success: boolean;
   data?: string[];
   message?: string;
 }
 
 export async function uploadFiles(params: UploadFilesOptions): Promise<UploadResponse> {
-  if (!params.files.length) {
-    throw new Error('No files provided');
-  }
+  if (!params.files.length) throw new Error('No files provided');
 
   const formData = new FormData();
 

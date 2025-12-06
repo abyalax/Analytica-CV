@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { QUERY_KEY } from '~/common/const/querykey';
 import { TResponse } from '~/common/types/response';
 import { UpdateCV } from '~/db/schema';
-import { updateCV } from '~/modules/cvs/cv.api';
+import { updateCV } from '~/modules/cv/cv.api';
 
 export const useUpdateCV = (clientId: string, cvId: string) => {
   const { back } = useRouter();

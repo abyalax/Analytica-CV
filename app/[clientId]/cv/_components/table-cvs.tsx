@@ -22,8 +22,6 @@ export const TableCVs = () => {
 
   const { columns, columnIds, initialColumnVisibility } = useColumns();
 
-  console.log(data);
-
   return (
     <Table
       data={data}
