@@ -15,9 +15,9 @@
   --primary-foreground: oklch(0.984 0.003 247.858);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
+  --muted: oklch(85.073% 0.00479 258.591);
   --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
+  --accent: oklch(88.415% 0.00648 255.726);
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.929 0.013 255.508);
@@ -37,22 +37,25 @@
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
+
+  --descriptions: #fafafa;
+  --descriptions-foreground: #111;
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
+  --background: oklch(20.483% 0.00617 271.115);
   --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.14 0.04 259.21);
+  --card: oklch(22.188% 0.0042 264.53);
   --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
+  --popover: oklch(23.977% 0.01602 269.01);
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
+  --primary-foreground: oklch(25.29% 0.01763 270.64);
+  --secondary: oklch(30.854% 0.01938 264.257);
   --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
+  --muted: oklch(33.909% 0.01946 260.685);
   --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
+  --accent: oklch(27.946% 0.02044 260.633);
   --accent-foreground: oklch(0.984 0.003 247.858);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
@@ -63,6 +66,9 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+
+  --descriptions: #0f0f0f;
+  --descriptions-foreground: #fafafa;
 }
 
 @theme inline {
@@ -104,4 +110,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-descriptions: var(--descriptions);
+  --color-descriptions-foreground: var(--descriptions-foreground);
 }

@@ -1,5 +1,4 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { CV } from '~/db/schema';
@@ -19,7 +18,7 @@ export const useColumns = (params?: Params) => {
         id: 'select',
         header: ({ table }) => (
           <Checkbox
-            className="cursor-pointer mx-3"
+            className="cursor-pointer mx-3 hover:bg-secondary/50"
             checked={table.getIsAllRowsSelected() ? true : table.getIsSomeRowsSelected() ? 'indeterminate' : false}
             onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
             onClick={(e) => e.stopPropagation()}
@@ -28,17 +27,20 @@ export const useColumns = (params?: Params) => {
         ),
         cell: ({ row }) => (
           <Checkbox
-            className="cursor-pointer mx-3"
+            className="cursor-pointer mx-3 hover:bg-secondary/50"
             checked={row.getIsSelected()}
             onClick={(e) => e.stopPropagation()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Select row"
           />
         ),
+        size: 50,
       }),
       columnHelper.accessor('name', {
         id: 'name',
         header: 'Name',
+        size: 200,
+        footer: 'Name',
       }),
       columnHelper.accessor('email', {
         id: 'email',
@@ -76,7 +78,7 @@ export const useColumns = (params?: Params) => {
     [],
   );
 
-  const columnIds = useMemo(() => columns.map((col) => col.id), [columns]);
+  const columnIds = useMemo(() => columns.map((col) => col.id ?? ''), [columns]);
 
   const initialColumnVisibility = useMemo(() => {
     const allVisible = !params?.defaultVisible;

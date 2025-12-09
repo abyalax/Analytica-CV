@@ -36,13 +36,13 @@ export const cv = pgTable('cv', {
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 100 }).notNull(),
   address: varchar('address', { length: 255 }).notNull(),
-  linkedin: varchar('linkedin', { length: 100 }),
+  linkedin: varchar('linkedin', { length: 100 }).notNull(),
   about: text('about').notNull(),
   interest: jsonb('interest').$type<string[]>().notNull(),
   skill: jsonb('skill').$type<string[]>().notNull(),
   education: jsonb('education').$type<Education[]>().notNull(),
-  experience: jsonb('experience').$type<Experience[]>(),
-  projects: jsonb('projects').$type<Project[]>(),
+  experience: jsonb('experience').$type<Experience[]>().notNull(),
+  projects: jsonb('projects').$type<Project[]>().notNull(),
   certificate: jsonb('certificate').$type<Certificate[]>().notNull(),
 });
 

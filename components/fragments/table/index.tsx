@@ -5,6 +5,8 @@ import type { ColumnDef, PaginationState, Row, SortingState, Updater } from '@ta
 import {
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -12,8 +14,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FunnelPlus } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { ComponentType, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { MetaResponse, metaRequestSchema } from '~/common/types/meta';
 import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
@@ -40,7 +41,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip
 import { createFuzzyFilter } from '~/lib/utils';
 import { useCreateStickyColumnStyle } from './_hooks/use-freeze-style';
 import { useScrollLeft } from './_hooks/use-scroll-left';
+import { BulkAction, BulkActions } from './_ui/bulk-actions';
 import { ColumnVisibilitySelector } from './_ui/column-visibility';
+import { FacetedFilter } from './_ui/faceted-filter';
 
 export type EngineSide = 'client_side' | 'server_side';
 
@@ -55,12 +58,22 @@ type EnableFeature<T = unknown> = {
     initialState?: PaginationState;
   };
   menufilter?: ReactNode[];
+  facetedFilter?: {
+    columnId: string;
+    title: string;
+    options: {
+      label: string;
+      value: string;
+      icon?: ComponentType<{ className?: string }>;
+    }[];
+  }[];
 };
 
 export type TableProps<T> = {
   enableFeature: EnableFeature<T>;
+  bulkActions?: BulkAction[];
   columns: ColumnDef<T, any>[];
-  columnIds: (string | undefined)[];
+  columnIds: string[];
   freezeColumnIds?: string[];
   data?: { data: T[]; meta: MetaResponse };
   topActions?: ReactNode;
@@ -100,7 +113,6 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
   const stickyStyle = useCreateStickyColumnStyle<T, unknown>(props.freezeColumnIds ?? []);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const scrollLeft = useScrollLeft(scrollRef);
-  const { theme } = useTheme();
 
   const serverSearch = useDebouncedCallback((value: string) => {
     navigate({
@@ -148,8 +160,8 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
 
   const table = useReactTable<T>({
     /**Common */
-    data: props.data?.data || [],
-    columns: props.columns,
+    data: props.data?.data ?? [],
+    columns: props.columns ?? [],
     debugTable: false,
     enableRowSelection: true,
     enableMultiRowSelection: true,
@@ -157,8 +169,10 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
     enableColumnFilters: true,
     enableMultiSort: true,
     getCoreRowModel: getCoreRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
 
-    /**Client Side */
+    /**Client Side Only */
     getSortedRowModel: isClientControl ? getSortedRowModel() : undefined,
     getFilteredRowModel: isClientControl ? getFilteredRowModel() : undefined,
     getPaginationRowModel: enableFeature.pagination ? (isClientControl ? getPaginationRowModel() : undefined) : undefined,
@@ -180,7 +194,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
     /**State */
     initialState: {
       columnVisibility: enableFeature.columnVisibilitySelector?.initialColumnVisibility,
-      columnOrder: props.columnIds as string[],
+      columnOrder: props.columnIds,
       pagination: {
         pageIndex: 0,
         pageSize: 10,
@@ -215,7 +229,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
   }, [isClientControl, search]);
 
   return (
-    <main className="w-full">
+    <main className="w-full flex flex-col gap-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex gap-4">
           {enableFeature.menufilter && (
@@ -238,13 +252,13 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
             </Popover>
           )}
           <Flex gap={'md'} align={'center'} justify={'center'} style={{ width: 300 }}>
-            <Input
-              placeholder="Search..."
-              value={globalFilter ?? ''}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              style={{ backgroundColor: 'white' }}
-            />
+            <Input placeholder="Search..." value={globalFilter ?? ''} onChange={(e) => setGlobalFilter(e.target.value)} />
           </Flex>
+          {enableFeature.facetedFilter?.map((filter) => {
+            const column = table.getColumn(filter.columnId);
+            if (!column) return null;
+            return <FacetedFilter key={filter.columnId} column={column} title={filter.title} options={filter.options} />;
+          })}
           <Pill onRemove={() => table.resetRowSelection()} selectedCount={selectedRows.length} />
         </div>
         <Flex gap={8} align={'center'}>
@@ -254,114 +268,127 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
           )}
         </Flex>
       </div>
-      <div ref={scrollRef} className="overflow-x-auto w-full">
-        <div className="relative">
-          <TableComponent className="bg-background rounded-md min-w-full">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="cursor-pointer bg-background hover:bg-secondary/50">
-                  {headerGroup.headers.map((header) => {
-                    const style = stickyStyle(header, scrollLeft, theme);
-                    const isAccessor = header.column.accessorFn !== undefined;
-                    return (
-                      <TableHead
-                        style={style}
-                        key={header.index}
-                        colSpan={header.colSpan}
-                        className="h-14 cursor-pointer relative"
-                      >
-                        {isAccessor ? (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div
-                                onClick={header.column.getToggleSortingHandler()}
-                                style={{ display: 'flex', justifyContent: 'space-between' }}
-                              >
-                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                {{
-                                  asc: <FaArrowUp style={{ margin: '0 5px' }} />,
-                                  desc: <FaArrowDown style={{ margin: '0 5px' }} />,
-                                }[header.column.getIsSorted() as string] ?? null}
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              {(() => {
-                                const sorted = header.column.getIsSorted();
+      <div className="rounded-md border overflow-hidden">
+        <div ref={scrollRef} className="overflow-x-auto w-full">
+          <div className="relative">
+            <TableComponent>
+              <TableHeader className="rounded-md">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="cursor-pointer rounded-md bg-background hover:bg-accent/50 group/row">
+                    {headerGroup.headers.map((header) => {
+                      const style = stickyStyle(header, scrollLeft);
+                      const isAccessor = header.column.accessorFn !== undefined;
+                      return (
+                        <TableHead
+                          style={style}
+                          key={header.index}
+                          colSpan={header.colSpan}
+                          className="sticky-shadow h-14 cursor-pointer relative"
+                        >
+                          {isAccessor ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div
+                                  onClick={header.column.getToggleSortingHandler()}
+                                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                                >
+                                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                  {{
+                                    asc: <FaArrowUp style={{ margin: '0 5px' }} />,
+                                    desc: <FaArrowDown style={{ margin: '0 5px' }} />,
+                                  }[header.column.getIsSorted() as string] ?? null}
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {(() => {
+                                  const sorted = header.column.getIsSorted();
 
-                                if (sorted === false || sorted == null) return 'Sort Ascending';
-                                if (sorted === 'asc') return 'Sort Descending';
-                                if (sorted === 'desc') return 'Unsort by this column';
+                                  if (sorted === false || sorted == null) return 'Sort Ascending';
+                                  if (sorted === 'asc') return 'Sort Descending';
+                                  if (sorted === 'desc') return 'Unsort by this column';
 
-                                return 'Sort by this column';
-                              })()}
-                            </TooltipContent>
-                          </Tooltip>
-                        ) : header.isPlaceholder ? null : (
-                          flexRender(header.column.columnDef.header, header.getContext())
-                        )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length > (enableFeature.virtualizer?.virtualizeAt as number)
-                ? virtualizer.getVirtualItems().map((virtualRow, index) => {
-                    const rows = table.getRowModel().rows;
-                    const row = rows[virtualRow.index];
-                    return (
+                                  return 'Sort by this column';
+                                })()}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : header.isPlaceholder ? null : (
+                            flexRender(header.column.columnDef.header, header.getContext())
+                          )}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.length > (enableFeature.virtualizer?.virtualizeAt as number)
+                  ? virtualizer.getVirtualItems().map((virtualRow, index) => {
+                      const rows = table.getRowModel().rows;
+                      const row = rows[virtualRow.index];
+                      return (
+                        <TableRow
+                          data-state={row.getIsSelected() && 'selected'}
+                          className="cursor-pointer bg-background hover:bg-secondary"
+                          onClick={(e) => props.onClickRow(row, e)}
+                          key={virtualRow.key}
+                          style={{
+                            height: `${virtualRow.size}px`,
+                            transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
+                          }}
+                        >
+                          {row.getVisibleCells().map((cell) => {
+                            const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
+                            const style = stickyStyle(headerForCell, scrollLeft, row.getIsSelected());
+                            return (
+                              <TableCell style={style} className="sticky-shadow h-14 relative" key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      );
+                    })
+                  : table.getRowModel().rows.map((row: Row<any>) => (
                       <TableRow
                         data-state={row.getIsSelected() && 'selected'}
-                        className="cursor-pointer bg-background hover:bg-secondary"
+                        className="bg-background hover:bg-accent/50 group/row"
                         onClick={(e) => props.onClickRow(row, e)}
-                        key={virtualRow.key}
-                        style={{
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
-                        }}
+                        style={{ cursor: 'pointer' }}
+                        key={row.id}
                       >
-                        {row.getVisibleCells().map((cell) => {
+                        {row.getVisibleCells().map((cell, index) => {
                           const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
-                          const style = stickyStyle(headerForCell, scrollLeft, theme);
+                          const style = stickyStyle(headerForCell, scrollLeft, row.getIsSelected());
                           return (
-                            <TableCell style={style} className="h-14 relative bg-background" key={cell.id}>
+                            <TableCell style={style} className="sticky-shadow h-14 relative" key={index}>
                               {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </TableCell>
                           );
                         })}
                       </TableRow>
-                    );
-                  })
-                : table.getRowModel().rows.map((row: Row<any>) => (
-                    <TableRow
-                      className="bg-background hover:bg-secondary"
-                      onClick={(e) => props.onClickRow(row, e)}
-                      style={{ cursor: 'pointer' }}
-                      key={row.id}
-                    >
-                      {row.getVisibleCells().map((cell, index) => {
-                        const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
-                        const style = stickyStyle(headerForCell, scrollLeft, theme);
-                        return (
-                          <TableCell style={style} className="h-14 relative" key={index}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-            </TableBody>
-            <TableFooter className="bg-transparent">
-              {table.getFooterGroups().map((footerGroup) => (
-                <TableRow key={footerGroup.id}>
-                  {footerGroup.headers.map((header) => (
-                    <TableHead key={header.index}>{flexRender(header.column.columnDef.footer, header.getContext())}</TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableFooter>
-          </TableComponent>
+                    ))}
+              </TableBody>
+              <TableFooter>
+                {table.getFooterGroups().map((footerGroup) => (
+                  <TableRow key={footerGroup.id}>
+                    {footerGroup.headers.map((header) => {
+                      const style = stickyStyle(header, scrollLeft);
+                      return (
+                        <TableHead
+                          style={style}
+                          key={header.index}
+                          colSpan={header.colSpan}
+                          className="sticky-shadow h-14 cursor-pointer relative"
+                        >
+                          {flexRender(header.column.columnDef.footer, header.getContext())}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableFooter>
+            </TableComponent>
+          </div>
         </div>
       </div>
       {enableFeature.pagination && (
@@ -420,6 +447,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
           </Flex>
         </Flex>
       )}
+      <BulkActions<T> table={table} bulkActions={props.bulkActions} />
     </main>
   );
 };

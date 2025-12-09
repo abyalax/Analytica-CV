@@ -14,7 +14,7 @@ export const Main: FC<MainProps> = ({ fixed, className, fluid, ...props }) => {
       className={cn(
         'px-4',
         // If layout is fixed, make the main container flex and grow
-        fixed && 'flex grow flex-col overflow-hidden',
+        fixed && 'flex grow flex-col',
         // If layout is not fluid, set the max-width
         !fluid && '@7xl/content:mx-auto @7xl/content:w-full @7xl/content:max-w-7xl',
         className,

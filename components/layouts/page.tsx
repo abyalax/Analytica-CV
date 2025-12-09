@@ -43,8 +43,8 @@ export const PageScreen: FC<PageScreenProps> = ({ title, breadcrumbs, children, 
             <ConfigDrawer />
           </div>
         </Header>
-        <Main fixed>
-          <Flex direction="row" justify="space-between" className="gap-4">
+        <Main fixed fluid>
+          <Flex direction="row" justify="space-between" className="gap-4 mb-4">
             <Flex direction="column" gap={20}>
               <H3 className="text-start">{title}</H3>
               <Breadcrumbs items={breadcrumbs} />

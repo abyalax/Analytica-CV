@@ -18,7 +18,7 @@ export const handlers = new Map<ErrorConstructor, ExceptionHandler>([
   [
     DrizzleQueryError,
     (e: DrizzleQueryError) => {
-      console.log('DrizzleQueryError: ', e.message);
+      console.log('DrizzleQueryError: ', e);
       return {
         status: 401,
         message: Message.DATABASE_QUERY_FAILED,

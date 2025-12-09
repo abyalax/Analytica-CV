@@ -15,7 +15,7 @@ import {
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 
-export type ModalProps = {
+type Props = {
   openOn?: 'click' | 'hover';
   iconOpen?: ReactNode;
 
@@ -28,7 +28,7 @@ export type ModalProps = {
   content?: ReactNode;
 } & AlertDialogProps;
 
-export const Modal: FC<ModalProps> = ({ openOn = 'click', textCancel = 'Cancel', textAction = 'Continue', ...props }) => {
+export const Modal: FC<Props> = ({ openOn = 'click', textCancel = 'Cancel', textAction = 'Continue', ...props }) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const handleMouseEnter = () => {

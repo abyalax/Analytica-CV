@@ -2,7 +2,7 @@
 
 import { Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { TFile, Upload } from '~/components/fragments/input/upload';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';

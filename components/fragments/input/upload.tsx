@@ -165,7 +165,6 @@ export const Upload: FC<UploadProps> = ({
     if (!selectedFiles) return;
 
     const newFiles: TFile[] = Array.from(selectedFiles).map((file) => {
-      // Validate each file
       const isValid = file.size <= maxSize * 1024 * 1024;
 
       return {

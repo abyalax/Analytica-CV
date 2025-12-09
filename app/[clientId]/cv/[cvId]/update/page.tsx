@@ -1,11 +1,9 @@
 import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
-import { getQueryClient } from '~/lib/query/client';
 import { url } from '~/lib/utils/converter';
-import { queryGetCV } from '../../_hooks/use-get-cv';
 import { Component } from './_components';
 
-export const permissions = [PERMISSIONS.CLIENT.UPDATE_CV];
+export const permissions = [PERMISSIONS.CLIENT.READ_CV];
 
 const breadcrumbItems = (clientId: string, cvId: string) => [
   {
@@ -38,11 +36,8 @@ const breadcrumbItems = (clientId: string, cvId: string) => [
 type Props = PageProps<'/[clientId]/cv/[cvId]/update'>;
 
 export default async function Page({ params }: Props) {
-  const queryClient = getQueryClient();
   const { cvId, clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId, cvId);
-
-  void queryClient.prefetchQuery(queryGetCV(clientId, cvId));
 
   return (
     <PageScreen title="Update CV" breadcrumbs={breadcrumbs}>

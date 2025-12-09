@@ -1,18 +1,24 @@
 'use client';
 
 import { MoreHorizontalIcon } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { toast } from 'sonner';
 import { Button } from '~/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { CV } from '~/db/schema';
+import { url } from '~/lib/utils/converter';
 
 type Props = {
   record: CV;
 };
 
-export const ActionColumn: FC<Props> = (props) => {
-  const handleClick = () => toast.info("This feature isn't available yet");
+export const ActionColumn: FC<Props> = ({ record }) => {
+  const { push } = useRouter();
+  const { clientId } = useParams<{ clientId: string }>();
+  const handleDetail = () => push(url('/[clientId]/cv/[cvId]', { clientId: clientId, cvId: record.id.toString() }));
+  const handleUpdate = () => push(url('/[clientId]/cv/[cvId]/update', { clientId: clientId, cvId: record.id.toString() }));
+  const handleDelete = () => toast.info('This Feature currently unavailable');
 
   return (
     <DropdownMenu>
@@ -22,34 +28,10 @@ export const ActionColumn: FC<Props> = (props) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleClick}>Detail</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleClick}>Update</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleClick}>Delete</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDetail}>Detail</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleUpdate}>Update</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
-
-// todo
-/**
-const { mutate: deleteClient } = useDeleteCV(clientId);
-<div className="flex items-center gap-2">
-  <Link
-    href={url('/[clientId]/cv/[cvId]/update', { clientId, cvId: info.row.original.id.toString() })}
-    onClick={(e) => e.stopPropagation()}
-    className="text-gray-700 hover:text-blue-600"
-  >
-    <FaPencilAlt />
-  </Link>
-  <button
-    type="button"
-    onClick={(e) => {
-      e.stopPropagation();
-      deleteClient(info.row.original.id.toString());
-    }}
-    className="text-red-600 hover:text-red-800"
-  >
-    <FaTrash />
-  </button>
-</div>
- */

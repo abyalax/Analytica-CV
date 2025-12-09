@@ -52,7 +52,7 @@ export default async function Page({ params, searchParams }: Props) {
   const breadcrumbs = breadcrumbItems(clientId);
 
   return (
-    <PageScreen title="Manage Curriculum Vitae" breadcrumbs={breadcrumbs}>
+    <PageScreen title="Manage CV" breadcrumbs={breadcrumbs}>
       <Component />
     </PageScreen>
   );

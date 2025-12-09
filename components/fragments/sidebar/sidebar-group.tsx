@@ -15,7 +15,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '~/components/ui/sidebar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { cn } from '~/lib/utils';
 import { MenuItem } from './sidebar-app';
 
@@ -28,12 +30,15 @@ type Props = {
 
 export const SidebarGroup: FC<Props> = ({ section }) => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const { state, isMobile } = useSidebar();
   const pathname = usePathname();
+
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]));
   };
   const isParentActive = (submenu?: Array<{ url: string }>) => submenu?.some((item) => pathname === item.url);
   const isActive = (url: string) => pathname === url;
+  const showTooltip = state === 'collapsed' && !isMobile;
 
   return (
     <SidebarGroupComponent key={section.group}>
@@ -49,39 +54,82 @@ export const SidebarGroup: FC<Props> = ({ section }) => {
 
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild={!hasSubmenu}
-                  className={cn(
-                    'w-full flex items-center justify-start hover:bg-accent hover:text-accent-foreground transition-colors',
-                    itemIsActive && 'bg-accent text-accent-foreground font-medium',
-                  )}
-                  onClick={hasSubmenu ? () => toggleExpanded(item.title) : undefined}
-                >
-                  {hasSubmenu ? (
-                    <>
-                      <div className="flex items-center gap-3">
+                {showTooltip ? (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <SidebarMenuButton
+                        asChild={!hasSubmenu}
+                        className={cn(
+                          'w-full flex items-center justify-start hover:bg-accent hover:text-accent-foreground transition-colors',
+                          itemIsActive && 'bg-accent text-accent-foreground font-medium',
+                        )}
+                        onClick={hasSubmenu ? () => toggleExpanded(item.title) : undefined}
+                      >
+                        {hasSubmenu ? (
+                          <>
+                            <div className="flex items-center gap-3">
+                              {item.icon && <item.icon className="w-4 h-4" />}
+                              <span>{item.title}</span>
+                              {item.badge && (
+                                <Badge variant={item.badge.variant} className="ml-auto text-xs px-1.5 py-0.5 h-5">
+                                  {item.badge.count}
+                                </Badge>
+                              )}
+                            </div>
+                            <ChevronRight className={cn('w-4 h-4 transition-transform', isExpanded && 'rotate-90')} />
+                          </>
+                        ) : (
+                          <Link href={item.url} className="flex items-center gap-3 w-full">
+                            {item.icon && <item.icon className="w-4 h-4" />}
+                            <span>{item.title}</span>
+                            {item.badge && (
+                              <Badge variant={item.badge.variant} className="rounded-full px-1 py-0 text-xs ml-auto h-5">
+                                {item.badge.count}
+                              </Badge>
+                            )}
+                          </Link>
+                        )}
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" align="center" sideOffset={5}>
+                      {item.title}
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <SidebarMenuButton
+                    asChild={!hasSubmenu}
+                    className={cn(
+                      'w-full flex items-center justify-start hover:bg-accent hover:text-accent-foreground transition-colors',
+                      itemIsActive && 'bg-accent text-accent-foreground font-medium',
+                    )}
+                    onClick={hasSubmenu ? () => toggleExpanded(item.title) : undefined}
+                  >
+                    {hasSubmenu ? (
+                      <>
+                        <div className="flex items-center gap-3">
+                          {item.icon && <item.icon className="w-4 h-4" />}
+                          <span>{item.title}</span>
+                          {item.badge && (
+                            <Badge variant={item.badge.variant} className="ml-auto text-xs px-1.5 py-0.5 h-5">
+                              {item.badge.count}
+                            </Badge>
+                          )}
+                        </div>
+                        <ChevronRight className={cn('w-4 h-4 transition-transform', isExpanded && 'rotate-90')} />
+                      </>
+                    ) : (
+                      <Link href={item.url} className="flex items-center gap-3 w-full">
                         {item.icon && <item.icon className="w-4 h-4" />}
                         <span>{item.title}</span>
                         {item.badge && (
-                          <Badge variant={item.badge.variant} className="ml-auto text-xs px-1.5 py-0.5 h-5">
+                          <Badge variant={item.badge.variant} className="rounded-full px-1 py-0 text-xs ml-auto h-5">
                             {item.badge.count}
                           </Badge>
                         )}
-                      </div>
-                      <ChevronRight className={cn('w-4 h-4 transition-transform', isExpanded && 'rotate-90')} />
-                    </>
-                  ) : (
-                    <Link href={item.url} className="flex items-center gap-3 w-full">
-                      {item.icon && <item.icon className="w-4 h-4" />}
-                      <span>{item.title}</span>
-                      {item.badge && (
-                        <Badge variant={item.badge.variant} className="rounded-full px-1 py-0 text-xs ml-auto h-5">
-                          {item.badge.count}
-                        </Badge>
-                      )}
-                    </Link>
-                  )}
-                </SidebarMenuButton>
+                      </Link>
+                    )}
+                  </SidebarMenuButton>
+                )}
 
                 {/* Submenu */}
                 {hasSubmenu && isExpanded && (

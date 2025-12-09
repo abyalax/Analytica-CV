@@ -1,46 +1,50 @@
 'use client';
 
 import { Header } from '@tanstack/react-table';
+import { useTheme } from 'next-themes';
+import { CSSProperties } from 'react';
 
-export const useCreateStickyColumnStyle =
-  <TData, TValue>(freezeIds: string[]) =>
-  (header: Header<TData, TValue>, scrollLeft: number, theme?: string) => {
+export const useCreateStickyColumnStyle = <TData, TValue>(freezeIds: string[]) => {
+  const { theme } = useTheme();
+  const createStyle = (header: Header<TData, TValue>, scrollLeft: number, isSelectedRow?: boolean) => {
     const id = header.column.id;
     if (!freezeIds.includes(id)) return undefined;
-
     const headerGroup = header.headerGroup.headers;
-    // ordered frozen ids in table order
+
     const orderedFreeze = headerGroup.filter((h) => freezeIds.includes(h.column.id)).map((h) => h.column.id);
 
-    // left pos from TanStack (most accurate)
     const left = header.getStart();
-
-    // apakah ini kolom frozen paling kanan?
     const isLastFrozen = orderedFreeze[orderedFreeze.length - 1] === id;
+    const stuck = scrollLeft > left - 1;
 
-    // kondisi "stuck": scrollLeft >= left (dengan tolerance)
-    const stuck = scrollLeft >= Math.max(0, Math.floor(left));
+    // always keep width intact
+    const width = header.getSize();
 
-    // base styles always (so cell occupies space)
-    const base: React.CSSProperties = {
+    // always apply these
+    const common: React.CSSProperties = {
+      width,
+      minWidth: width,
+      maxWidth: width,
       position: 'sticky',
-      left,
-      zIndex: 40,
+      left: stuck ? left : 0, // only stick after scroll, otherwise stay natural
+      zIndex: 30, // base zIndex for frozen cols
+      backgroundColor: stuck ? (isSelectedRow ? 'var(--selected)' : 'var(--background)') : 'transparent',
       boxSizing: 'border-box',
-      // ensure transform context for virtualizer
       transform: 'translateZ(0)',
+      transition: 'left 0.2s linear',
     };
 
-    // only the last frozen column shows shadow when it's actually stuck
+    // If last frozen col and stuck → show right-side shadow only
     if (isLastFrozen && stuck) {
       return {
-        ...base,
-        backgroundColor: 'white', // TODO: Adjust to be Dynamic for theming
-        // you might use borderLeft/Right to sharpen edge:
-        borderRight: '1px solid rgba(0,0,0,0.06)',
-      } as React.CSSProperties;
+        ...common,
+        zIndex: 40,
+        // pseudo-element for right-only shadow
+        ['--sticky-shadow']: theme === 'dark' ? 'rgba(0,0,0,0.28)' : 'rgba(0,0,0,0.10)',
+      } as CSSProperties;
     }
 
-    // if not stuck yet, no shadow (but still sticky position)
-    return base;
+    return common;
   };
+  return createStyle;
+};

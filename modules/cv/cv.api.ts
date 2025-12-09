@@ -2,7 +2,7 @@ import { MetaRequest, MetaResponse } from '~/common/types/meta';
 import { TAxiosResponse } from '~/common/types/response';
 import { CreateCV, CV, UpdateCV } from '~/db/schema';
 import { api } from '~/lib/axios/api';
-import { ReturnExtracted } from '~/lib/pdf/extract';
+import { ReturnExtracted } from '~/lib/pdf/client';
 import { endpoint } from '~/lib/utils/converter';
 
 export const getCVs = async (

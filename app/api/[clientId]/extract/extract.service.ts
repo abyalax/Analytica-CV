@@ -1,7 +1,7 @@
 import Ollama from 'ollama';
 import { CV } from '~/db/schema';
 import { ServiceUnavailableException, UnprocessableEntity } from '~/lib/handler/error';
-import { ReturnExtracted } from '~/lib/pdf/extract';
+import { ReturnExtracted } from '~/lib/pdf/client';
 
 const buildCVParsingPrompt = (rawText: string, clientId: string): string => {
   return `
@@ -20,31 +20,31 @@ const buildCVParsingPrompt = (rawText: string, clientId: string): string => {
           "skill": [""],
           "education": [
               {
-              "name": "",
-              "major": ""
+                "name": "",
+                "major": ""
               }
           ],
           "experience": [
               {
-              "role": "",
-              "company": "",
-              "description": "",
-              "start": "",
-              "end": ""
+                "role": "",
+                "company": "",
+                "description": "",
+                "start": "",
+                "end": ""
               }
           ],
           "projects": [
               {
-              "title": "",
-              "description": ""
+                "title": "",
+                "description": ""
               }
           ],
           "certificate": [
               {
-              "title": "",
-              "issuer": "",
-              "year": "",
-              "url": ""
+                "title": "",
+                "issuer": "",
+                "year": "",
+                "url": ""
               }
           ]
         }

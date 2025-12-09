@@ -11,7 +11,13 @@ type PaginateOptions = {
   orderBy?: SQL;
 };
 
-export async function paginate<T>({ table, page, perPage, orderBy, where }: PaginateOptions): Promise<{ data: T[]; meta: MetaResponse }> {
+export async function paginate<T>({
+  table,
+  page,
+  perPage,
+  orderBy,
+  where,
+}: PaginateOptions): Promise<{ data: T[]; meta: MetaResponse }> {
   const totalCountResult = await db
     .select({ count: sql<number>`count(*)`.mapWith(Number) })
     .from(table)

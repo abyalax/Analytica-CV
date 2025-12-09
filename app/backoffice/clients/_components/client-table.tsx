@@ -22,7 +22,7 @@ export const ClientsTable = () => {
     <Table
       data={data}
       columns={columns}
-      columnIds={columnIds}
+      columnIds={columnIds as string[]}
       onClickRow={(data) => console.log(data.original)}
       enableFeature={{
         columnVisibilitySelector: {

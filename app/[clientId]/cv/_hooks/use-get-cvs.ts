@@ -12,6 +12,6 @@ export const queryGetCVs = (clientId: string, params: MetaRequest<CV>) =>
     select: (data) => data.data.data,
   });
 
-export const useGetCVs = (clientId: string, params: MetaRequest<CV>) => {
+export const useGetCVs = (clientId: string, params: MetaRequest<CV> & Record<string, unknown>) => {
   return useSuspenseQuery(queryGetCVs(clientId, params));
 };
