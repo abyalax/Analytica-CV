@@ -14,9 +14,7 @@ export const TableCVs = () => {
 
   const { clientId } = useParams<{ clientId: string }>();
 
-  const { data } = useGetCVs(clientId, {
-    ...search,
-  });
+  const { data } = useGetCVs(clientId, search);
 
   const { columns, columnIds, initialColumnVisibility } = useColumns();
 

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { PERMISSIONS } from '~/common/const/permission';
-import { MetaRequest } from '~/common/types/meta';
+import { MetaRequest, SortOrder } from '~/common/types/meta';
 import { PageScreen } from '~/components/layouts/page';
 import { getQueryClient } from '~/lib/query/client';
 import { url } from '~/lib/utils/converter';
@@ -43,7 +43,7 @@ export default async function Page({ params, searchParams }: Props) {
     per_page: querySearch.per_page ? Number(querySearch.per_page) : 10,
     search: querySearch.search as string,
     sort_by: querySearch.sort_by as keyof CV,
-    sort_order: querySearch.order_by as 'asc' | 'desc',
+    sort_order: querySearch.order_by as SortOrder,
   };
 
   const { clientId } = await params;

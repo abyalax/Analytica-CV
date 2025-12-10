@@ -19,11 +19,13 @@ export const GET = safeHandler<ClientId>(async (req, { params }) => {
     _params[key] = value ?? '';
   }
 
-  const castParams = _params as unknown as TFilterCV;
+  const castParams: TFilterCV = {
+    page: Number(_params.page),
+    per_page: Number(_params.per_page),
+    ..._params,
+  };
 
-  console.log(params);
-
-  const data = await cvService.list({ page: 1, per_page: 10 }, { user_id: Number(clientId) });
+  const data = await cvService.list({ ...castParams }, { user_id: Number(clientId) });
   return NextResponse.json({
     message: 'Success get all CVs',
     data,

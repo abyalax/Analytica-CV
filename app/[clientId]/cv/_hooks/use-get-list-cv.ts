@@ -12,6 +12,6 @@ export const queryGetCVs = (clientId: string, params: TFilterCV) =>
     select: (data) => data.data.data,
   });
 
-export const useGetCVs = (clientId: string, params: MetaRequest<CV> & Record<string, unknown>) => {
+export const useGetCVs = (clientId: string, params: MetaRequest<CV>) => {
   return useSuspenseQuery(queryGetCVs(clientId, params));
 };

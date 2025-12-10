@@ -1,15 +1,19 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <generic services> */
 import { MetaResponse } from '~/common/types/meta';
 
+type CustomOrderBy = {
+  [key: string]: 'asc' | 'desc';
+};
+
 export type PaginateOptions<Where, OrderBy, Entity> = {
-  page: number;
-  per_page: number;
+  page: string | number;
+  per_page: string | number;
   search?: {
     term?: string;
     fields: (keyof Entity)[];
   };
   where?: Where;
-  order_by?: OrderBy;
+  order_by?: OrderBy | CustomOrderBy;
 };
 
 export class Repository<
@@ -45,6 +49,10 @@ export class Repository<
     this.model = model;
   }
 
+  _getModel() {
+    return this.model;
+  }
+
   async create(data: any) {
     return this.model.create({ data });
   }
@@ -58,9 +66,11 @@ export class Repository<
   }
 
   async paginate<T>(options: PaginateOptions<Where, OrderBy, T>): Promise<{ data: T[]; meta: MetaResponse }> {
-    const { page, per_page, where = {}, order_by, search } = options;
-
-    let finalWhere = { ...where };
+    const page = Number(options.page) || 1;
+    const per_page = Number(options.per_page) || 10;
+    const search = options.search;
+    const orderBy = {};
+    let where = options.where ?? {};
 
     // --- Advanced Search Across Fields ---
     if (search?.term && search.fields?.length) {
@@ -70,17 +80,22 @@ export class Repository<
         })),
       };
 
-      finalWhere = {
-        AND: [finalWhere, searchFilter],
+      where = {
+        AND: [where, searchFilter],
       };
     }
 
-    // --- Query ---
-    const total_count = await this.model.count({ where: finalWhere });
+    const total_count = await this.model.count({ where });
+
+    for (const [key, value] of Object.entries(options.order_by || {})) {
+      if (!key || key === 'undefined' || key === 'null') continue;
+      if (value !== 'asc' && value !== 'desc') continue;
+      Object.assign(orderBy, { [key]: value });
+    }
 
     const data = await this.model.findMany({
-      where: finalWhere,
-      orderBy: order_by,
+      orderBy,
+      where,
       skip: (page - 1) * per_page,
       take: per_page,
     });

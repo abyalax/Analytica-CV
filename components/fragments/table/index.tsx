@@ -151,7 +151,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
       search: (prev) => ({
         ...prev,
         sort_by: next[0]?.id,
-        sort_order: next[0]?.desc ? 'DESC' : 'ASC',
+        sort_order: next[0]?.desc ? 'desc' : 'asc',
       }),
       replace: true,
       viewTransition: true,

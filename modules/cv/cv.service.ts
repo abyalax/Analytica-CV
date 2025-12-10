@@ -16,10 +16,12 @@ class CVService extends Service<CVRepository> {
       page,
       per_page,
       where,
-      order_by: { [sort_by as string]: sort_order },
+      order_by: {
+        [sort_by as string]: sort_order,
+      },
       search: {
         term: search,
-        fields: ['name', 'email', 'about', 'address', 'linkedin', 'interest', 'skill'],
+        fields: ['name', 'email', 'about', 'address', 'linkedin'],
       },
     });
   }

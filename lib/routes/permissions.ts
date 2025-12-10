@@ -1,12 +1,12 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-12-10T12:09:38.148Z
+// Generated at: 2025-12-10T13:42:09.310Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
-  '/pricing': [],
-  '/order': [],
   '/charts': [],
+  '/order': [],
   '/backoffice': ['client:read'],
+  '/pricing': [],
   '/[clientId]': ['cv:read'],
   '/backoffice/clients': ['client:read'],
   '/auth/reset-password': [],
