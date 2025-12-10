@@ -10,5 +10,11 @@
   },
   "[dockercompose]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
   }
 }

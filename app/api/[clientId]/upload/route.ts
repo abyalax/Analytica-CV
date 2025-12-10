@@ -1,12 +1,12 @@
-import fs, {} from 'node:fs';
+import fs from 'node:fs';
 import path from 'node:path';
 import { NextResponse } from 'next/server';
 import { TNextResponse } from '~/common/types/response';
-import { CV } from '~/db/schema';
+import { parseToJsonCV } from '~/data/cv/cv.api';
 import { safeHandler } from '~/lib/handler/safe-handler';
 import { pdfToTextFromFormidable } from '~/lib/pdf/server';
 import { extractFiles } from '~/lib/request/formidable';
-import { parseToJsonCV } from '~/modules/cv/cv.api';
+import { CV } from '~/modules/cv/cv.type';
 
 export const config = {
   api: {

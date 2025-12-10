@@ -10,12 +10,12 @@ export type Pagination = z.infer<typeof paginationSchema>;
 export const sortingSchema = (fields: string[]) =>
   z.object({
     sort_by: z.enum([...fields]).optional(),
-    sort_order: z.enum(['ASC', 'DESC']).optional(),
+    sort_order: z.enum(['asc', 'desc']).optional(),
   });
 
 interface Sorting<E> {
   sort_by?: keyof E | string;
-  sort_order?: 'ASC' | 'DESC';
+  sort_order?: 'asc' | 'desc';
 }
 
 export const globalFilterSchema = z.object({

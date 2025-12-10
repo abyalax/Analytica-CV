@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 import { PERMISSIONS } from '~/common/const/permission';
 import { MetaRequest } from '~/common/types/meta';
 import { PageScreen } from '~/components/layouts/page';
-import { CV } from '~/db/schema';
 import { getQueryClient } from '~/lib/query/client';
 import { url } from '~/lib/utils/converter';
+import { CV } from '~/modules/cv/cv.type';
 import { Component } from './_components';
-import { queryGetCVs } from './_hooks/use-get-cvs';
+import { queryGetCVs } from './_hooks/use-get-list-cv';
 
 export const metadata: Metadata = {
   title: 'Manage CVs | Dashboard',
@@ -43,12 +43,12 @@ export default async function Page({ params, searchParams }: Props) {
     per_page: querySearch.per_page ? Number(querySearch.per_page) : 10,
     search: querySearch.search as string,
     sort_by: querySearch.sort_by as keyof CV,
-    sort_order: querySearch.order_by as 'ASC' | 'DESC',
+    sort_order: querySearch.order_by as 'asc' | 'desc',
   };
 
   const { clientId } = await params;
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(queryGetCVs(clientId, query));
+  queryClient.prefetchQuery(queryGetCVs(clientId, query));
   const breadcrumbs = breadcrumbItems(clientId);
 
   return (

@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { parseToJsonCV } from '~/data/cv/cv.api';
 import { ExtractParams, pdfToTexts } from '~/lib/pdf/client';
-import { parseToJsonCV } from '~/modules/cv/cv.api';
 
 export const useExtractCV = (clientId: string) => {
   const query = useMutation({

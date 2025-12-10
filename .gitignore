@@ -48,3 +48,6 @@ main.ts
 /python/libs/*
 python/
 !python/extract_cv.py
+/generated/prisma
+
+/generated/prisma

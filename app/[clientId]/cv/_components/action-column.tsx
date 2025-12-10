@@ -6,8 +6,8 @@ import { FC } from 'react';
 import { toast } from 'sonner';
 import { Button } from '~/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
-import { CV } from '~/db/schema';
 import { url } from '~/lib/utils/converter';
+import { CV } from '~/modules/cv/cv.type';
 
 type Props = {
   record: CV;

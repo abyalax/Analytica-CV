@@ -26,8 +26,8 @@ export const Component: FC = () => {
       label: 'Skill',
       children: (
         <Flex>
-          {data?.skill.map((item, index) => (
-            <Badge variant={'secondary'} key={index}>
+          {data?.skill.map((item) => (
+            <Badge variant={'secondary'} key={item}>
               {item}
             </Badge>
           ))}
@@ -38,8 +38,8 @@ export const Component: FC = () => {
       label: 'Experience',
       children: (
         <Flex direction="column">
-          {data?.experience?.map((item, index) => (
-            <Flex key={index} direction="column">
+          {data?.experience?.map((item) => (
+            <Flex key={item.company} direction="column">
               <P className="m-0">{item.role}</P>
               <P className="m-0">{item.company}</P>
               <P className="m-0">{item.description}</P>

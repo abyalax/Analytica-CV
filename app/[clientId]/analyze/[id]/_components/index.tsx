@@ -1,7 +1,7 @@
 'use client';
 
 import { FC } from 'react';
-import { CV } from '~/db/schema';
+import { CV } from '~/modules/cv/cv.type';
 
 type Props = {
   data: CV;

@@ -7,8 +7,8 @@ import { PropsWithChildren } from 'react';
 
 import { QueryKey } from '~/common/const/querykey';
 import { Providers } from '~/components/provider/application';
-import { Permission, Role } from '~/db/schema';
 import { getQueryClient } from '~/lib/query/client';
+import { Permission, Role } from '~/modules/users/users.type';
 
 export const font = Inter({
   subsets: ['latin'],

@@ -1,23 +1,16 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import z from 'zod';
-import { metaRequestSchema, sortingSchema } from '~/common/types/meta';
+import { metaRequestSchema } from '~/common/types/meta';
 import { Table } from '~/components/fragments/table';
 import { useSearch } from '~/components/hooks/use-search';
-import { cv } from '~/db/schema';
 import { useColumns } from '../_hooks/use-columns';
-import { useGetCVs } from '../_hooks/use-get-cvs';
+import { useGetCVs } from '../_hooks/use-get-list-cv';
 import { Filters } from './filters';
 import { UploadCV } from './upload-cv';
 
 export const TableCVs = () => {
-  const sortSchema = sortingSchema(Object.entries(cv).map(([key]) => key));
-  const search = useSearch(
-    metaRequestSchema.extend({
-      ...sortSchema.shape,
-    }),
-  );
+  const search = useSearch(metaRequestSchema);
 
   const { clientId } = useParams<{ clientId: string }>();
 

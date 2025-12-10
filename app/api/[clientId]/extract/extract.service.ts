@@ -1,7 +1,7 @@
 import Ollama from 'ollama';
-import { CV } from '~/db/schema';
 import { ServiceUnavailableException, UnprocessableEntity } from '~/lib/handler/error';
 import { ReturnExtracted } from '~/lib/pdf/client';
+import { CV } from '~/modules/cv/cv.type';
 
 const buildCVParsingPrompt = (rawText: string, clientId: string): string => {
   return `
@@ -78,8 +78,8 @@ const parseRawTextWithLLM = async (rawText: string, clientId: string): Promise<C
 
   // Clean potential markdown code blocks
   const cleanedContent = content
-    .replace(/```json\s*/g, '')
-    .replace(/```\s*/g, '')
+    .replaceAll(/```json\s*/g, '')
+    .replaceAll(/```\s*/g, '')
     .trim();
 
   try {

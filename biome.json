@@ -50,6 +50,14 @@
       }
     }
   },
+  "css": {
+    "linter": {
+      "enabled": false
+    },
+    "formatter": {
+      "enabled": false
+    }
+  },
   "javascript": {
     "formatter": {
       "quoteStyle": "single",

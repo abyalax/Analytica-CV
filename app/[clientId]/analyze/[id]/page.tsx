@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 
 import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
-import { CV } from '~/db/schema';
 import { url } from '~/lib/utils/converter';
+import { CV } from '~/modules/cv/cv.type';
 import { Component } from './_components';
 
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ export default async function Page({ params }: Props) {
     id: 1,
     name: 'John Doe',
     email: 'john@example.com',
-    userId: 1,
+    user_id: 1,
     address: '123 Main St, Anytown, CA 12345',
     linkedin: 'https://www.linkedin.com/in/johndoe/',
     about:

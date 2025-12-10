@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
-import { CV } from '~/db/schema';
+import { CV } from '~/modules/cv/cv.type';
 import { ActionColumn } from '../_components/action-column';
 
 const columnHelper = createColumnHelper<CV>();

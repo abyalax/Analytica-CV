@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
-
 import { env } from '~/common/const/credential';
-
 import { PageLanding } from './_components/page-landing';
+import './styles/index.css';
 
 export const metadata: Metadata = {
   title: "Abya's AnaliticaCV",

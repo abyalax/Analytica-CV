@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-
 import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
 
