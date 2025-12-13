@@ -8,11 +8,10 @@ export class CVRepository extends Repository<Prisma.cvDelegate, Prisma.cvWhereIn
     super(prisma.cv);
   }
 
-  async findByID(id: number) {
+  async findByID(clientId: number, id: number) {
     const cv = await this.model.findUniqueOrThrow({
-      where: { id },
+      where: { id, user_id: clientId },
     });
-
     return CVMapper.toDTO(cv);
   }
 }

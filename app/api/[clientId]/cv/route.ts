@@ -25,7 +25,7 @@ export const GET = safeHandler<ClientId>(async (req, { params }) => {
     ..._params,
   };
 
-  const data = await cvService.list({ ...castParams }, { user_id: Number(clientId) });
+  const data = await cvService.list(Number(clientId), { ...castParams }, { user_id: Number(clientId) });
   return NextResponse.json({
     message: 'Success get all CVs',
     data,

@@ -9,18 +9,27 @@ export const getListCV = (params: TFilterCV, clientId: string) => {
   return api.get(endpoint('/api/[clientId]/cv', { clientId }), { params });
 };
 
-export const getCV = (clientId: string, id: string): Promise<TAxiosResponse<CV>> => {
-  return api.get(endpoint('/api/[clientId]/cv/[id]', { clientId, id }));
+export const getCV = (clientId: string, cvId: string): Promise<TAxiosResponse<CV>> => {
+  const _endpoint = endpoint('/api/[clientId]/cv/[cvId]', { clientId, cvId });
+  return api.get(_endpoint);
 };
 
 export const createCV = (clientId: string, payload: CV) => {};
-export const updateCV = (clientId: string, id: string, payload: PayloadCV) => {};
-export const deleteCV = (clientId: string, id: string) => {};
+
+export const updateCV = (clientId: string, cvId: string, payload: PayloadCV) => {
+  const _endpoint = endpoint('/api/[clientId]/cv/[cvId]', { clientId, cvId });
+  return api.put(_endpoint, payload);
+};
+
+export const deleteCV = (clientId: string, cvId: string) => {
+  const _endpoint = endpoint('/api/[clientId]/cv/[cvId]', { clientId, cvId });
+  return api.delete(_endpoint);
+};
 
 export const parseToJsonCV = async (params: {
-  clientId: string;
+  clientId: number;
   extracted: ReturnExtracted[];
 }): Promise<TAxiosResponse<CV[]>> => {
-  const ENDPOINT = endpoint('/api/[clientId]/extract', { clientId: params.clientId });
+  const ENDPOINT = endpoint('/api/[clientId]/extract', { clientId: params.clientId.toString() });
   return api.post(ENDPOINT, params.extracted);
 };

@@ -3,16 +3,15 @@ import { ServiceUnavailableException, UnprocessableEntity } from '~/lib/handler/
 import { ReturnExtracted } from '~/lib/pdf/client';
 import { CV } from '~/modules/cv/cv.type';
 
-const buildCVParsingPrompt = (rawText: string, clientId: string): string => {
+const buildCVParsingPrompt = (rawText: string, clientId: number): string => {
   return `
         Kamu adalah parser CV. Tugas kamu: ekstrak informasi dari teks berikut menjadi JSON VALID.
         Format wajib mengikuti struktur ini:
 
         {
-          "id": null,
           "name": "",
           "email": "",
-          "userId": "${clientId}",
+          "user_id": ${clientId},
           "address": "",
           "linkedin": "",
           "about": "",
@@ -62,7 +61,7 @@ const buildCVParsingPrompt = (rawText: string, clientId: string): string => {
     `.trim();
 };
 
-const parseRawTextWithLLM = async (rawText: string, clientId: string): Promise<CV> => {
+const parseRawTextWithLLM = async (rawText: string, clientId: number): Promise<CV> => {
   const prompt = buildCVParsingPrompt(rawText, clientId);
 
   const response = await Ollama.chat({
@@ -93,7 +92,7 @@ const parseRawTextWithLLM = async (rawText: string, clientId: string): Promise<C
 /**
  * Parse multiple raw CV texts in parallel
  */
-export const parseMultipleCVs = async (rawCVs: ReturnExtracted[], clientId: string): Promise<CV[]> => {
+export const parseMultipleCVs = async (rawCVs: ReturnExtracted[], clientId: number): Promise<CV[]> => {
   const parsePromises = rawCVs.map((cv) =>
     parseRawTextWithLLM(cv.text, clientId)
       .then((parsed) => ({ success: true, data: parsed, file: cv.file }))
@@ -106,7 +105,7 @@ export const parseMultipleCVs = async (rawCVs: ReturnExtracted[], clientId: stri
   const failures = results.filter((r) => !r.success);
   if (failures.length > 0) {
     console.error('Failed to parse some CVs:', failures);
-    // todo: decide to throw or return partial results
+    throw new UnprocessableEntity(`Failed to parse ${failures.map((f) => f.file).join(', ')}`);
   }
 
   // Return only successful parses

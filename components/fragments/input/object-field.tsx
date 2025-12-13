@@ -49,24 +49,38 @@ export const ObjectArrayField = <T extends FieldValues, O extends object>({
       <div className="space-y-4">
         {items.map((_, index: number) => (
           <div key={index} className="border p-4 rounded space-y-2">
-            {Object.entries(shape).map(([key, config]) => (
-              <FormField
-                control={form.control}
-                key={key}
-                name={`${name}.${index}.${key}` as Path<T>}
-                render={({ field }) => (
-                  <FormItem>
-                    {/* @ts-ignore */}
-                    <FormLabel>{config.label}</FormLabel>
-                    <FormControl>
-                      {/* @ts-ignore */}
-                      {config.type === 'textarea' ? <Textarea {...field} /> : <Input type={config.type ?? 'text'} {...field} />}
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
+            {Object.entries(shape).map(([key, _config]) => {
+              const config = _config as FieldConfig;
+              return (
+                <FormField
+                  control={form.control}
+                  key={key}
+                  name={`${name}.${index}.${key}` as Path<T>}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{config.label}</FormLabel>
+                      <FormControl>
+                        {config.type === 'textarea' ? (
+                          <Textarea {...field} />
+                        ) : config.type === 'number' ? (
+                          <Input
+                            type="number"
+                            value={field.value ?? ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(value === '' ? undefined : Number(value));
+                            }}
+                          />
+                        ) : (
+                          <Input type={config.type ?? 'text'} {...field} />
+                        )}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
 
             <Button variant="destructive" size="sm" onClick={() => removeItem(index)}>
               Remove

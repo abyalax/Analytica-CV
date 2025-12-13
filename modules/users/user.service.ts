@@ -8,7 +8,7 @@ class UserService extends Service<UserRepository> {
   }
 
   paginateUsers(page: number, per_page: number) {
-    return this.repository.paginate({
+    return this.repository.paginate(0, {
       page,
       per_page,
     });
@@ -23,7 +23,7 @@ class UserService extends Service<UserRepository> {
   }
 
   create(data: Prisma.usersCreateInput) {
-    return this.repository.create(data);
+    return this.repository.create(0, data);
   }
 }
 

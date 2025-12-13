@@ -2,7 +2,7 @@
 import { QueryClient, UseMutationOptions, useMutation as useReactMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
-import { TResponse } from '~/common/types/response';
+import { TAxiosResponse, TResponse } from '~/common/types/response';
 
 type TExtendedMutationOptions<TData, TError, TVariables, TContext> = UseMutationOptions<TData, TError, TVariables, TContext> & {
   showSuccessMessage?: boolean;
@@ -24,8 +24,9 @@ export const useMutation = <TData = TResponse<unknown>, TError = TResponse, TVar
       ...restOptions,
       onSuccess: (data: TData, variables: TVariables, context: TContext) => {
         onSuccess?.(data, variables, context);
-        const castData = data as TResponse;
-        toast.success(castData.message);
+        console.log(data);
+        const castData = data as TAxiosResponse;
+        toast.success(castData.data.message);
       },
       onError: (error: TError, variables: TVariables, context?: TContext) => {
         onError?.(error, variables, context);

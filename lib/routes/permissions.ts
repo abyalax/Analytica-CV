@@ -1,12 +1,12 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-12-10T13:42:09.310Z
+// Generated at: 2025-12-13T14:03:26.036Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
-  '/charts': [],
-  '/order': [],
-  '/backoffice': ['client:read'],
   '/pricing': [],
+  '/order': [],
+  '/charts': [],
+  '/backoffice': ['client:read'],
   '/[clientId]': ['cv:read'],
   '/backoffice/clients': ['client:read'],
   '/auth/reset-password': [],
@@ -26,11 +26,11 @@ export const routePermissions: Record<string, string[]> = {
   '/api/auth/reset-password': [],
   '/api/auth/forgot-password': [],
   '/api/auth/[...nextauth]': [],
-  '/api/[clientId]/upload': [],
   '/api/[clientId]/extract': [],
   '/api/[clientId]/cv': [],
   '/api/backoffice/clients/[clientId]': [],
-  '/api/[clientId]/cv/[id]': [],
+  '/api/[clientId]/cv/upload': [],
+  '/api/[clientId]/cv/[cvId]': [],
   '/:clientId': ['cv:read'],
   '/auth': [],
   '/:clientId/dashboard': ['cv:read'],
@@ -47,9 +47,9 @@ export const routePermissions: Record<string, string[]> = {
   '/api/auth': [],
   '/api/auth/*': [],
   '/api/[clientId]': [],
-  '/api/:clientId/upload': [],
   '/api/:clientId/extract': [],
   '/api/:clientId/cv': [],
   '/api/backoffice/clients/:clientId': [],
-  '/api/:clientId/cv/:id': [],
+  '/api/:clientId/cv/upload': [],
+  '/api/:clientId/cv/:cvId': [],
 } as const;
