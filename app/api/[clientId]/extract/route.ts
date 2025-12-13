@@ -7,7 +7,7 @@ import { parseMultipleCVs } from './extract.service';
 export const POST = safeHandler<{ clientId: string }>(async (req, { params }): Promise<NextResponse<TResponse<CV[]>>> => {
   const { clientId } = await params;
   const body = await req.json();
-  const resullts = await parseMultipleCVs(body, clientId);
+  const resullts = await parseMultipleCVs(body, Number(clientId));
   return NextResponse.json({
     message: 'Extracted CVs',
     data: resullts,

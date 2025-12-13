@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <generic services> */
+/** biome-ignore-all lint/suspicious/noExplicitAny: <generic repositories> */
 import { MetaResponse } from '~/common/types/meta';
 
 type CustomOrderBy = {
@@ -53,19 +53,33 @@ export class Repository<
     return this.model;
   }
 
-  async create(data: any) {
-    return this.model.create({ data });
+  async create(clientId: number, data: any) {
+    return this.model.create({
+      data: {
+        ...data,
+        user_id: clientId === 0 ? undefined : clientId,
+      },
+    });
   }
 
-  async update(id: number, data: any) {
-    return this.model.update({ where: { id }, data });
+  async createMany(clientId: number, data: any[]) {
+    return this.model.createMany({
+      data: {
+        ...data,
+        user_id: clientId,
+      },
+    });
   }
 
-  async delete(id: number) {
-    return this.model.delete({ where: { id } });
+  async update<E = any>(clientId: number, id: number, data: any): Promise<E> {
+    return this.model.update({ where: { id, user_id: clientId }, data });
   }
 
-  async paginate<T>(options: PaginateOptions<Where, OrderBy, T>): Promise<{ data: T[]; meta: MetaResponse }> {
+  async delete(clientId: number, id: number) {
+    return this.model.delete({ where: { id, user_id: clientId } });
+  }
+
+  async paginate<T>(clientId: number, options: PaginateOptions<Where, OrderBy, T>): Promise<{ data: T[]; meta: MetaResponse }> {
     const page = Number(options.page) || 1;
     const per_page = Number(options.per_page) || 10;
     const search = options.search;
@@ -85,7 +99,12 @@ export class Repository<
       };
     }
 
-    const total_count = await this.model.count({ where });
+    const total_count = await this.model.count({
+      where: {
+        user_id: clientId === 0 ? undefined : clientId,
+        ...where,
+      },
+    });
 
     for (const [key, value] of Object.entries(options.order_by || {})) {
       if (!key || key === 'undefined' || key === 'null') continue;
@@ -95,7 +114,10 @@ export class Repository<
 
     const data = await this.model.findMany({
       orderBy,
-      where,
+      where: {
+        user_id: clientId === 0 ? undefined : clientId,
+        ...where,
+      },
       skip: (page - 1) * per_page,
       take: per_page,
     });

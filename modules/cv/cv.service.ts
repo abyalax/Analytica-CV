@@ -9,10 +9,10 @@ class CVService extends Service<CVRepository> {
     super(new CVRepository());
   }
 
-  list(params: MetaRequest<CV>, where: Prisma.cvWhereInput) {
+  list(clientId: number, params: MetaRequest<CV>, where: Prisma.cvWhereInput) {
     const { page, per_page, search, sort_by, sort_order } = params;
 
-    return this.repository.paginate<CV>({
+    return this.repository.paginate<CV>(clientId, {
       page,
       per_page,
       where,
@@ -26,20 +26,24 @@ class CVService extends Service<CVRepository> {
     });
   }
 
-  findByID(id: number) {
-    return this.repository.findByID(id);
+  findByID(clientId: number, id: number) {
+    return this.repository.findByID(clientId, id);
   }
 
-  create(payload: Prisma.$cvPayload) {
-    return this.repository.create(payload);
+  create(clientId: number, payload: Prisma.cvCreateInput) {
+    return this.repository.create(clientId, payload);
   }
 
-  update(id: number, payload: Prisma.$cvPayload) {
-    return this.repository.update(id, payload);
+  createMany(clientId: number, payload: Prisma.cvCreateManyInput[]) {
+    return this.repository.createMany(clientId, payload);
   }
 
-  delete(id: number) {
-    return this.repository.delete(id);
+  update(clientId: number, id: number, payload: Prisma.cvUpdateInput) {
+    return this.repository.update<CV>(clientId, id, payload);
+  }
+
+  delete(clientId: number, id: number) {
+    return this.repository.delete(clientId, id);
   }
 }
 

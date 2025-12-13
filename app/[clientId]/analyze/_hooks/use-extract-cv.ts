@@ -7,7 +7,7 @@ export const useExtractCV = (clientId: string) => {
   const query = useMutation({
     mutationFn: async (params: ExtractParams) => {
       const extracted = await pdfToTexts(params.files, params.onProgress);
-      return parseToJsonCV({ clientId, extracted });
+      return parseToJsonCV({ clientId: Number(clientId), extracted });
     },
     onSuccess: (_, variables) => toast.success(`Successfully extract ${variables.files.length} files`),
     onError: (error, variables, context) => {
