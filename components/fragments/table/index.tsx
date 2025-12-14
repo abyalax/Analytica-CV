@@ -71,7 +71,7 @@ export type TableProps<T> = {
     | boolean;
   menufilter?: ReactNode[];
   facetedFilter?: {
-    columnId: string;
+    columnId: keyof T;
     title: string;
     options: {
       label: string;
@@ -267,9 +267,11 @@ export const Table = <T,>({
             <Input placeholder="Search..." value={globalFilter ?? ''} onChange={(e) => setGlobalFilter(e.target.value)} />
           </Flex>
           {props.facetedFilter?.map((filter) => {
-            const column = table.getColumn(filter.columnId);
+            const column = table.getColumn(filter.columnId as string);
             if (!column) return null;
-            return <FacetedFilter key={filter.columnId} column={column} title={filter.title} options={filter.options} />;
+            return (
+              <FacetedFilter key={filter.columnId as string} column={column} title={filter.title} options={filter.options} />
+            );
           })}
           <Pill onRemove={() => table.resetRowSelection()} selectedCount={selectedRows.length} />
         </div>
@@ -378,25 +380,27 @@ export const Table = <T,>({
                       </TableRow>
                     ))}
               </TableBody>
-              <TableFooter>
-                {table.getFooterGroups().map((footerGroup) => (
-                  <TableRow key={footerGroup.id}>
-                    {footerGroup.headers.map((header) => {
-                      const style = bodyStickyStyle(header, scrollLeft);
-                      return (
-                        <TableHead
-                          style={style}
-                          key={header.index}
-                          colSpan={header.colSpan}
-                          className="sticky-shadow h-14 cursor-pointer relative"
-                        >
-                          {flexRender(header.column.columnDef.footer, header.getContext())}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableFooter>
+              {table.getFooterGroups().length > 0 && (
+                <TableFooter>
+                  {table.getFooterGroups().map((footerGroup) => (
+                    <TableRow key={footerGroup.id}>
+                      {footerGroup.headers.map((header) => {
+                        const style = bodyStickyStyle(header, scrollLeft);
+                        return (
+                          <TableHead
+                            style={style}
+                            key={header.index}
+                            colSpan={header.colSpan}
+                            className="sticky-shadow h-14 cursor-pointer relative"
+                          >
+                            {flexRender(header.column.columnDef.footer, header.getContext())}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableFooter>
+              )}
             </TableComponent>
           </div>
         </div>

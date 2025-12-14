@@ -38,10 +38,17 @@ export function matchPermission(userPermissions: string[], required: string): bo
   });
 }
 
-export const convertCamelToTitleCase = (text: string | undefined) => {
+export const convertCamelToTitleCase = (text?: string): string => {
   if (!text) return '';
-  const result = text.replace(/([A-Z])/g, ' $1');
-  return result.charAt(0).toUpperCase() + result.slice(1);
+  return (
+    text
+      // ganti underscore dengan spasi
+      .replace(/_/g, ' ')
+      // sisipkan spasi sebelum huruf kapital (camelCase)
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      // uppercase huruf pertama tiap kata
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+  );
 };
 
 export const formatCurrency = (value: string) => {

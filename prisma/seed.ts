@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { PrismaClient } from '~/generated/prisma/client';
 
 import 'dotenv/config';
-import { mockCVs } from './data.';
+import { mockCVs, mockJobDescriptions } from './data.';
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -116,6 +116,11 @@ async function main() {
   // --- Insert CV (mockCVs imported) ---
   await prisma.cV.createMany({
     data: mockCVs,
+  });
+
+  //  --- Insert data Job Descriptions ---
+  await prisma.jobDescription.createMany({
+    data: mockJobDescriptions,
   });
 
   console.log('✅ Seeding User roles/permissions done!');

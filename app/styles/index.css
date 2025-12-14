@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@import "./_keyframe-animations.scss";
+@import "./_variables.scss";
+@config "../../tailwind.config.ts";
 @custom-variant dark (&:is(.dark *));
 
 @layer base {

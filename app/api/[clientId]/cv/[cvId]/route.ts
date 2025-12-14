@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { ClientCVParams } from '~/common/types/params';
-
 import { NotFoundException } from '~/lib/handler/error';
 import { safeHandler } from '~/lib/handler/safe-handler';
 import { cvService } from '~/modules/cv/cv.service';

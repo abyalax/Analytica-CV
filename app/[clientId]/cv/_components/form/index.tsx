@@ -13,14 +13,14 @@ import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { cvSchema, FormDataCV } from './schema';
 
-interface FormProps {
+type Props = {
   initialValues?: FormDataCV;
   onSubmit: (_data: FormDataCV) => void;
   isLoading?: boolean;
   buttonText?: string;
-}
+};
 
-export const FormCV: FC<FormProps> = ({ onSubmit, initialValues, isLoading = false, buttonText = 'Submit' }) => {
+export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, buttonText = 'Submit' }) => {
   const form = useForm<FormDataCV>({
     resolver: zodResolver(cvSchema),
     mode: 'onBlur',

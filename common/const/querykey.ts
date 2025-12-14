@@ -16,6 +16,14 @@ export const QUERY_KEY = {
     UPDATE: 'update_cv',
     DELETE: 'delete_cv',
   },
+  JOB_DESC: {
+    GETS: 'get_job_descs',
+    GET_BY_ID: 'get_job_desc_by_id',
+
+    CREATE: 'create_job_desc',
+    UPDATE: 'update_job_desc',
+    DELETE: 'delete_job_desc',
+  },
   CLIENT: {
     GETS: 'get_clients',
     GET_BY_ID: 'get_client_by_id',

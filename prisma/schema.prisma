@@ -97,23 +97,21 @@ model JobDescription {
   id      Int @id @default(autoincrement())
   user_id Int
 
-  title    String  @db.VarChar(255)
-  company  String? @db.VarChar(255)
-  location String? @db.VarChar(255)
-
-  employment_type String? @db.VarChar(50) // full-time, contract, intern
-  level           String? @db.VarChar(50) // junior, mid, senior
-
-  description String // raw JD text (important for RAG)
-
-  responsibilities Json? // array of string
-  requirements     Json? // array of string
-  skills           Json? // array of string
-
-  experience_year Int?
-  salary_range    Json? // { min, max, currency }
+  title           String @db.VarChar(255)
+  company         String @db.VarChar(255)
+  location        String @db.VarChar(255)
+  employment_type String @db.VarChar(50)
+  level           String @db.VarChar(50)
 
   status String @default("draft") @db.VarChar(50)
+
+  description      String @db.Text
+  responsibilities String @db.Text
+  requirements     String @db.Text
+  skills           String @db.Text
+
+  experience_year Int
+  salary_range    Json
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -132,8 +130,8 @@ model AIAgent {
   id      Int @id @default(autoincrement())
   user_id Int
 
-  type   String @db.VarChar(50) // "cv-analyzer", "jd-analyzer"
-  config Json?
+  type   String @db.VarChar(50)
+  config Json
 
   user User @relation(fields: [user_id], references: [id])
 
@@ -170,8 +168,8 @@ model Document {
   type   String @db.VarChar(50) // culture, policy, recruitment, etc
   source String @db.VarChar(50) // upload, generated
 
-  content  String? // raw text (optional if file-based)
-  metadata Json? // file info, author, version, etc
+  content  String // raw text (optional if file-based)
+  metadata Json // file info, author, version, etc
 
   status String @default("active") @db.VarChar(50)
 
