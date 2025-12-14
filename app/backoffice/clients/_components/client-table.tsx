@@ -21,15 +21,7 @@ export const ClientsTable = () => {
       columns={columns}
       columnIds={columnIds as string[]}
       onClickRow={(data) => console.log(data.original)}
-      enableFeature={{
-        columnVisibilitySelector: {
-          initialColumnVisibility,
-        },
-        engineSide: 'server_side',
-        pagination: {
-          perPageOptions: [5, 10, 20, 30, 40, 50, 100],
-        },
-      }}
+      initialColumnVisibility={initialColumnVisibility}
     />
   );
 };

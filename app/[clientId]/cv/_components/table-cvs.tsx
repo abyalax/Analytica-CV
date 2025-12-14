@@ -11,11 +11,8 @@ import { UploadCV } from './upload-cv';
 
 export const TableCVs = () => {
   const search = useSearch(metaRequestSchema);
-
   const { clientId } = useParams<{ clientId: string }>();
-
   const { data } = useGetCVs(clientId, search);
-
   const { columns, columnIds, initialColumnVisibility } = useColumns();
 
   return (
@@ -26,28 +23,22 @@ export const TableCVs = () => {
       onClickRow={(data) => console.log(data.original)}
       freezeColumnIds={['select', 'name']}
       topActions={<UploadCV />}
-      enableFeature={{
-        columnVisibilitySelector: {
-          initialColumnVisibility,
+      initialColumnVisibility={initialColumnVisibility}
+      pagination={true}
+      menufilter={Filters()}
+      engineSide="server_side"
+      facetedFilter={[
+        {
+          columnId: 'name',
+          title: 'Name',
+          options: [
+            { label: 'Active', value: 'active' },
+            { label: 'Inactive', value: 'inactive' },
+            { label: 'Invited', value: 'invited' },
+            { label: 'Suspended', value: 'suspended' },
+          ],
         },
-        pagination: {
-          perPageOptions: [5, 10, 20, 30, 40, 50, 100],
-        },
-        menufilter: Filters(),
-        engineSide: 'server_side',
-        facetedFilter: [
-          {
-            columnId: 'name',
-            title: 'Name',
-            options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
-              { label: 'Invited', value: 'invited' },
-              { label: 'Suspended', value: 'suspended' },
-            ],
-          },
-        ],
-      }}
+      ]}
     />
   );
 };

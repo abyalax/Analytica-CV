@@ -12,7 +12,7 @@ export const QueryClientProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ReactQueryClientProvider client={queryClient}>
       {children}
-      {isDevelopment && <ReactQueryDevtools position="left" />}
+      {isDevelopment && <ReactQueryDevtools position="left" buttonPosition="bottom-left" />}
     </ReactQueryClientProvider>
   );
 };
