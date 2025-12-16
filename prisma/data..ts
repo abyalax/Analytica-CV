@@ -834,7 +834,7 @@ const rawJobDescriptions = [
 
 const toMarkdownList = (items?: string[]): string => {
   if (!items?.length) return '';
-  return items.map((item) => `- ${item}`).join('\n\n');
+  return items.map((item) => `- ${item}`).join('\n');
 };
 
 export const mockJobDescriptions = rawJobDescriptions.map((item) => {

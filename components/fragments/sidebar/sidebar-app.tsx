@@ -74,6 +74,9 @@ export function SidebarApp({ user = { name: 'John Doe', email: 'john@example.com
 
   const isActive = (url: string) => pathname === url;
 
+  console.log({ navigations });
+  console.log({ filteredNavigations });
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       {/* Header with branding */}

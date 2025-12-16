@@ -5,6 +5,7 @@ import { Checkbox } from '~/components/ui/checkbox';
 import { P } from '~/components/ui/typography';
 import { JobDescription } from '~/modules/jobs/jobs.type';
 import { ActionColumn } from '../_components/action-column';
+import { TagEmployeeType } from '../_components/tag-employee-type';
 
 const columnHelper = createColumnHelper<JobDescription>();
 export type TJobsDescriptionColummns = keyof JobDescription | 'select' | 'action';
@@ -72,10 +73,11 @@ export const useColumns = (params?: Params) => {
       columnHelper.accessor('employment_type', {
         id: 'employment_type',
         header: 'Type Employee',
+        cell: (e) => <TagEmployeeType type={e.getValue()} />,
       }),
       columnHelper.accessor('salary_range', {
-        id: 'certificate',
-        header: 'Sertifikat',
+        id: 'salary_range',
+        header: 'Salary',
         cell: ({ row }) => <P>{`${row.original.salary_range.min} - ${row.original.salary_range.max}`}</P>,
       }),
       columnHelper.display({

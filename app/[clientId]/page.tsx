@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
 import { url } from '~/lib/utils/converter';
 
@@ -9,7 +8,7 @@ export const metadata: Metadata = {
   keywords: 'client, dashboard, management, users, settings',
 };
 
-export const permissions = [PERMISSIONS.CLIENT.READ_CV];
+export const permissions = [];
 const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',

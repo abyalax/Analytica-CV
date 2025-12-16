@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-12-16T03:30:07.474Z
+// Generated at: 2025-12-16T03:38:16.623Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
@@ -7,14 +7,15 @@ export const routePermissions: Record<string, string[]> = {
   '/order': [],
   '/charts': [],
   '/backoffice': ['client:read'],
-  '/[clientId]': ['cv:read'],
+  '/[clientId]': [],
   '/backoffice/clients': ['client:read'],
   '/auth/reset-password': [],
   '/auth/register': [],
   '/auth/login': [],
   '/auth/forgot-password': [],
-  '/[clientId]/jobs': ['cv:read'],
+  '/[clientId]/jobs': [],
   '/[clientId]/dashboard': ['cv:read'],
+  '/[clientId]/cv': ['cv:read'],
   '/[clientId]/chats': ['cv:read'],
   '/[clientId]/analyze': ['cv:read'],
   '/backoffice/clients/create': ['client:read'],
@@ -34,17 +35,17 @@ export const routePermissions: Record<string, string[]> = {
   '/api/[clientId]/cv': [],
   '/api/backoffice/clients/[clientId]': [],
   '/api/[clientId]/jobs/[jobId]': [],
-  '/api/[clientId]/cv/[cvId]': [],
   '/api/[clientId]/cv/upload': [],
-  '/:clientId': ['cv:read'],
+  '/api/[clientId]/cv/[cvId]': [],
+  '/:clientId': [],
   '/auth': [],
-  '/:clientId/jobs': ['cv:read'],
+  '/:clientId/jobs': [],
   '/:clientId/dashboard': ['cv:read'],
+  '/:clientId/cv': ['cv:read'],
   '/:clientId/chats': ['cv:read'],
   '/:clientId/analyze': ['cv:read'],
   '/backoffice/clients/:clientId': ['client:read'],
   '/:clientId/jobs/:jobId': ['cv:read'],
-  '/[clientId]/cv': ['cv:read'],
   '/:clientId/cv/:cvId': ['cv:read'],
   '/:clientId/analyze/:id': ['cv:read'],
   '/:clientId/jobs/:jobId/update': ['cv:read'],
@@ -61,6 +62,6 @@ export const routePermissions: Record<string, string[]> = {
   '/api/:clientId/cv': [],
   '/api/backoffice/clients/:clientId': [],
   '/api/:clientId/jobs/:jobId': [],
-  '/api/:clientId/cv/:cvId': [],
   '/api/:clientId/cv/upload': [],
+  '/api/:clientId/cv/:cvId': [],
 } as const;

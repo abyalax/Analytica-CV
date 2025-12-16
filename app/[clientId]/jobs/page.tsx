@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export const permissions = [];
+
 const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',

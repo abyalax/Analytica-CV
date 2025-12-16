@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { PERMISSIONS } from '~/common/const/permission';
 import { MetaRequest, SortOrder } from '~/common/types/meta';
-import { Tiptap } from '~/components/fragments/input/tiptap';
 import { PageScreen } from '~/components/layouts/page';
 import { getQueryClient } from '~/lib/query/client';
 import { url } from '~/lib/utils/converter';
@@ -54,7 +53,6 @@ export default async function Page({ params, searchParams }: Props) {
 
   return (
     <PageScreen title="Manage CV" breadcrumbs={breadcrumbs}>
-      <Tiptap />
       <Component />
     </PageScreen>
   );

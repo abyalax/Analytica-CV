@@ -1,6 +1,8 @@
 'use client';
 
+import { MailCheck, Trash2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { toast } from 'sonner';
 import { metaRequestSchema } from '~/common/types/meta';
 import { Table } from '~/components/fragments/table';
 import { useSearch } from '~/components/hooks/use-search';
@@ -26,6 +28,12 @@ export const TableCVs = () => {
       initialColumnVisibility={initialColumnVisibility}
       pagination={true}
       menufilter={Filters()}
+      bulkActions={[
+        { icon: <MailCheck />, label: 'Send To Email', onClick: () => toast.info('Success gess') },
+        { icon: <Trash2 />, label: 'Remove Data', onClick: () => toast.info('Success gess') },
+        { icon: <MailCheck />, label: 'Send To Email', onClick: () => toast.info('Success gess') },
+        { icon: <Trash2 />, label: 'Remove Data', onClick: () => toast.info('Success gess') },
+      ]}
       engineSide="server_side"
       facetedFilter={[
         {

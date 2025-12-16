@@ -29,7 +29,13 @@ export const useCreateStickyColumnStyle = <TData, TValue>(freezeIds: string[]) =
       position: 'sticky',
       left: stuck ? left : 0,
       zIndex: 30,
-      backgroundColor: stuck ? (isSelectedRow ? 'var(--selected)' : 'var(--background)') : 'var(--background)',
+      backgroundColor: stuck
+        ? isSelectedRow
+          ? 'var(--accent)'
+          : 'var(--background)'
+        : isSelectedRow
+          ? 'var(--accent)'
+          : 'var(--background)',
       boxSizing: 'border-box',
       transform: 'translateZ(0)',
       transition: 'left 0.2s linear',

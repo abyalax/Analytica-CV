@@ -22,10 +22,10 @@ export const PERMISSIONS = {
     CREATE_CV: 'cv:create',
     DELETE_CV: 'cv:delete',
 
-    CREATE_JOBDESC: 'jobdesc:create',
-    READ_JOBDESC: 'jobdesc:read',
-    UPDATE_JOBDESC: 'jobdesc:update',
-    DELETE_JOBDESC: 'jobdesc:delete',
+    CREATE_JOBDESC: 'job_desc:create',
+    READ_JOBDESC: 'job_desc:read',
+    UPDATE_JOBDESC: 'job_desc:update',
+    DELETE_JOBDESC: 'job_desc:delete',
 
     READ_HISTORIES: 'histories:read',
     UPDATE_HISTORIES: 'histories:update',

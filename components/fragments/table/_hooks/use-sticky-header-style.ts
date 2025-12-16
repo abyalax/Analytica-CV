@@ -17,7 +17,7 @@ export const useCreateStickyHeaderStyle = <TData, TValue>(freezeIds: string[], s
       return {
         position: 'sticky',
         top: 0,
-        zIndex: 50, // Higher than body cells
+        zIndex: 30, // Higher than body cells
         backgroundColor: 'var(--sidebar)',
       };
 
@@ -30,7 +30,7 @@ export const useCreateStickyHeaderStyle = <TData, TValue>(freezeIds: string[], s
       maxWidth: width,
       position: 'sticky',
       top: 0,
-      zIndex: 50, // Higher than body cells
+      zIndex: 30, // Higher than body cells
       backgroundColor: 'var(--sidebar)',
       boxSizing: 'border-box',
       transform: 'translateZ(0)',
@@ -52,7 +52,7 @@ export const useCreateStickyHeaderStyle = <TData, TValue>(freezeIds: string[], s
       return {
         ...baseStyle,
         left: stuckHorizontal ? left : 0,
-        zIndex: 60, // Highest: header + frozen column
+        zIndex: 50, // Highest: header + frozen column
         transition: 'left 0.2s linear',
         // Kombinasi shadow jika stuck both directions
         ...(stuck &&

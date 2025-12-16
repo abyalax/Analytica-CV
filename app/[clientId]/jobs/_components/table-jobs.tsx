@@ -1,6 +1,8 @@
 'use client';
 
+import { SendIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { toast } from 'sonner';
 import { metaRequestSchema } from '~/common/types/meta';
 import { Table } from '~/components/fragments/table';
 import { useSearch } from '~/components/hooks/use-search';
@@ -23,6 +25,10 @@ export const TableJobs = () => {
       initialColumnVisibility={initialColumnVisibility}
       pagination={true}
       engineSide="server_side"
+      bulkActions={[
+        { icon: <SendIcon />, label: 'Analyze This Data', onClick: () => toast.info('Success') },
+        { icon: <SendIcon />, label: 'Remove This Data', onClick: () => toast.info('Success') },
+      ]}
       facetedFilter={[
         {
           columnId: 'employment_type',

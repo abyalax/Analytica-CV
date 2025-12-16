@@ -1,85 +1,97 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { Eye, MessageSquare, Sparkles } from 'lucide-react';
 import { FC, useState } from 'react';
-import { TFile, Upload } from '~/components/fragments/input/upload';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
-import { Progress } from '~/components/ui/progress';
-import { P } from '~/components/ui/typography';
-import { useExtractCV } from '../_hooks/use-extract-cv';
+import { Main } from '~/components/layouts/main';
+import { Section } from '~/components/layouts/section';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '~/components/ui/resizable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { ChatInterface } from './chat-interface';
+import { CVSummary } from './cv-summary';
+import { FilePreview } from './file-preview';
+import { FileUpload } from './file-upload';
 
 export const Component: FC = () => {
-  const [files, setFiles] = useState<TFile[]>([]);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const { clientId } = useParams<{ clientId: string }>();
-  const { extract, data } = useExtractCV(clientId);
-
-  const extracted = data?.data.data;
-
-  const handleFilesChange = (files: TFile[]) => {
-    console.log(files);
-  };
-
-  const handleAnalyze = async () => {
-    if (files.length === 0) return;
-    setAnalyzing(true);
-    setProgress(0);
-    extract(
-      {
-        files: files.map((file) => file.file),
-        onProgress: (progress) => setProgress(progress),
-      },
-      {
-        onSuccess: () => {
-          setAnalyzing(false);
-          setProgress(0);
-        },
-      },
-    );
-  };
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
 
   return (
-    <div className="container ">
-      <div className="mb-6">
-        <P>Analyze your CVs all in one place</P>
-      </div>
+    <div className="max-h-[80vh] overflow-y-scroll bg-background">
+      <Main fluid className="min-h-[80vh]">
+        <ResizablePanelGroup
+          autoSaveId="analyze-horizontal"
+          direction="horizontal"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[80vh] min-w-full"
+        >
+          {/* Left Column */}
+          <ResizablePanel defaultSize={50}>
+            <ResizablePanelGroup
+              autoSaveId="analyze-vertical"
+              direction="vertical"
+              className="min-h-[80vh] w-full flex flex-col gap-4"
+            >
+              <ResizablePanel defaultSize={30}>
+                <Section>
+                  <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-muted/30">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    <h2 className="text-sm font-medium text-foreground">Upload CV</h2>
+                  </div>
+                  <div className="p-3">
+                    <FileUpload file={file} onFileSelect={setFile} onPreviewUrlChange={setPreviewUrl} />
+                  </div>
+                </Section>
+              </ResizablePanel>
 
-      <div className="space-y-6">
-        <Upload files={files} setFiles={setFiles} onChange={handleFilesChange} multiple mode="drag" />
-        {analyzing && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Menganalisis...</CardTitle>
-              <CardDescription>Mohon tunggu, sedang memproses {files.length} CV</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Progress value={progress} className="w-full" />
-              <p className="text-sm text-muted-foreground mt-2 text-center">{progress}% selesai</p>
-            </CardContent>
-          </Card>
-        )}
+              <ResizableHandle />
 
-        <Button className="w-full" size="lg" onClick={handleAnalyze} disabled={files.length === 0 || analyzing}>
-          {analyzing ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Menganalisis {files.length} CV...
-            </>
-          ) : (
-            `Analisis ${files.length} CV`
-          )}
-        </Button>
-      </div>
+              <ResizablePanel defaultSize={70}>
+                <Section>
+                  <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-muted/30">
+                    <Eye className="w-4 h-4 text-primary" />
+                    <h2 className="text-sm font-medium text-foreground">Preview File</h2>
+                  </div>
+                  <div className="p-3 h-full">
+                    <FilePreview previewUrl={previewUrl} />
+                  </div>
+                </Section>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </ResizablePanel>
+          <ResizableHandle />
 
-      {Array.isArray(extracted) && extracted.length > 0 && (
-        <div className="mt-6">
-          <P>Extracted {extracted.length} CV</P>
-          <pre>{JSON.stringify(extracted, null, 2)}</pre>
-        </div>
-      )}
+          {/* Right Column */}
+          <ResizablePanel defaultSize={50}>
+            <div className="flex flex-col gap-4 max-h-[80vh] w-full">
+              <Section>
+                <Tabs defaultValue="summaries" className="h-full flex flex-col">
+                  <TabsList>
+                    <TabsTrigger value="summaries">Summaries</TabsTrigger>
+                    <TabsTrigger value="chats">Chats</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="summaries">
+                    <Section className="h-[73vh]">
+                      <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-muted/30">
+                        <Sparkles className="w-4 h-4 text-primary" />
+                        <h2 className="text-sm font-medium text-foreground">Ringkasan Analisis</h2>
+                      </div>
+                      <CVSummary hasFile={!!file} />
+                    </Section>
+                  </TabsContent>
+                  <TabsContent value="chats">
+                    <Section className="max-h-[73vh] overflow-y-scroll">
+                      <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-muted/30">
+                        <MessageSquare className="w-4 h-4 text-primary" />
+                        <h2 className="text-sm font-medium text-foreground">Chat with Agent AI</h2>
+                      </div>
+                      <ChatInterface hasFile={!!file} />
+                    </Section>
+                  </TabsContent>
+                </Tabs>
+              </Section>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </Main>
     </div>
   );
 };

@@ -4,8 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FC, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { FallBack } from '~/components/fragments/fallback';
-import { ArrayInputField } from '~/components/fragments/input/array-input';
-import { ObjectArrayField } from '~/components/fragments/input/object-field';
+import { FieldArray } from '~/components/fragments/input/field-array';
+import { FieldObjectArray } from '~/components/fragments/input/field-object-array';
 import { Section } from '~/components/layouts/section';
 import { Button } from '~/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
@@ -101,11 +101,11 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
             )}
           />
 
-          <ArrayInputField form={form} name="interest" label="Interest" />
-          <ArrayInputField form={form} name="skill" label="Skill" />
+          <FieldArray form={form} name="interest" label="Interest" />
+          <FieldArray form={form} name="skill" label="Skill" />
 
           <Section>
-            <ObjectArrayField
+            <FieldObjectArray
               form={form}
               name="education"
               label="Education"
@@ -117,7 +117,7 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
           </Section>
 
           <Section>
-            <ObjectArrayField
+            <FieldObjectArray
               form={form}
               name="experience"
               label="Experience"
@@ -132,7 +132,7 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
           </Section>
 
           <Section>
-            <ObjectArrayField
+            <FieldObjectArray
               form={form}
               name="projects"
               label="Projects"
@@ -144,7 +144,7 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
           </Section>
 
           <Section>
-            <ObjectArrayField
+            <FieldObjectArray
               form={form}
               name="certificate"
               label="Certificate"

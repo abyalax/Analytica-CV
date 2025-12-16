@@ -24,7 +24,6 @@ import { Flex } from '~/components/layouts/flex';
 import { Col, Row as RowComponent } from '~/components/layouts/grid';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
-import { Pill } from '~/components/ui/pill';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '~/components/ui/select';
 import {
@@ -224,7 +223,6 @@ export const Table = <T,>({
     },
   });
 
-  const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
   const virtualizer = useVirtualizer({
     count: table.getRowModel().rows.length,
     getScrollElement: () => parentRef.current,
@@ -242,8 +240,9 @@ export const Table = <T,>({
 
   return (
     <main className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between">
         <div className="flex gap-4">
+          <BulkActions<T> table={table} bulkActions={props.bulkActions} />
           {props.menufilter && (
             <Popover>
               <PopoverTrigger asChild>
@@ -273,7 +272,6 @@ export const Table = <T,>({
               <FacetedFilter key={filter.columnId as string} column={column} title={filter.title} options={filter.options} />
             );
           })}
-          <Pill onRemove={() => table.resetRowSelection()} selectedCount={selectedRows.length} />
         </div>
         <Flex gap={8} align={'center'}>
           {props.topActions}
@@ -311,7 +309,7 @@ export const Table = <T,>({
                                   }[header.column.getIsSorted() as string] ?? null}
                                 </div>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="z-100">
                                 {(() => {
                                   const sorted = header.column.getIsSorted();
 
@@ -440,7 +438,6 @@ export const Table = <T,>({
           </Flex>
         </Flex>
       )}
-      <BulkActions<T> table={table} bulkActions={props.bulkActions} />
     </main>
   );
 };
