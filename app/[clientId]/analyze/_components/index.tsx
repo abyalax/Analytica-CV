@@ -12,8 +12,8 @@ import { FilePreview } from './file-preview';
 import { FileUpload } from './file-upload';
 
 export const Component: FC = () => {
-  const [file, setFile] = useState<File | undefined>(undefined);
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+  const [files, setFiles] = useState<File[] | undefined>(undefined);
+  const [previewFile, setPreviewFile] = useState<File | undefined>(undefined);
 
   return (
     <div className="max-h-[80vh] overflow-y-scroll bg-background">
@@ -36,8 +36,10 @@ export const Component: FC = () => {
                     <Sparkles className="w-4 h-4 text-primary" />
                     <h2 className="text-sm font-medium text-foreground">Upload CV</h2>
                   </div>
-                  <div className="p-3">
-                    <FileUpload file={file} onFileSelect={setFile} onPreviewUrlChange={setPreviewUrl} />
+                  <div className="h-full overflow-y-scroll">
+                    <div className="p-3">
+                      <FileUpload files={files} setFiles={setFiles} setPreviewFile={setPreviewFile} previewFile={previewFile} />
+                    </div>
                   </div>
                 </Section>
               </ResizablePanel>
@@ -51,7 +53,7 @@ export const Component: FC = () => {
                     <h2 className="text-sm font-medium text-foreground">Preview File</h2>
                   </div>
                   <div className="p-3 h-full">
-                    <FilePreview previewUrl={previewUrl} />
+                    <FilePreview previewFile={previewFile} />
                   </div>
                 </Section>
               </ResizablePanel>
@@ -74,7 +76,7 @@ export const Component: FC = () => {
                         <Sparkles className="w-4 h-4 text-primary" />
                         <h2 className="text-sm font-medium text-foreground">Ringkasan Analisis</h2>
                       </div>
-                      <CVSummary hasFile={!!file} />
+                      <CVSummary hasFile={!!files} />
                     </Section>
                   </TabsContent>
                   <TabsContent value="chats">
@@ -83,7 +85,7 @@ export const Component: FC = () => {
                         <MessageSquare className="w-4 h-4 text-primary" />
                         <h2 className="text-sm font-medium text-foreground">Chat with Agent AI</h2>
                       </div>
-                      <ChatInterface hasFile={!!file} />
+                      <ChatInterface hasFile={!!files} />
                     </Section>
                   </TabsContent>
                 </Tabs>
