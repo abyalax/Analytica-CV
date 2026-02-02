@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   keywords: 'client, dashboard, management, users, settings',
 };
 
-export const permissions = [];
 const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',
@@ -24,7 +23,7 @@ const breadcrumbItems = (clientId: string) => [
 
 type Props = PageProps<'/[clientId]'>;
 
-export default async function Page({ params }: Props) {
+export default async function Page({ params }: Readonly<Props>) {
   const { clientId } = await params;
   const breadcrumbs = breadcrumbItems(clientId);
   return <PageScreen title="Dashboard" breadcrumbs={breadcrumbs} />;

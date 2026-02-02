@@ -54,16 +54,32 @@ async function main() {
     { key: 'cv:single_analyze', name: 'Single Analysis CV' },
     { key: 'cv:bulk_analyze', name: 'Bulk Analysis CV' },
 
+    { key: 'chat:read', name: 'Read Chats' },
+    { key: 'chat:create', name: 'Create Chats' },
+    { key: 'chat:update', name: 'Update Chats' },
+    { key: 'chat:delete', name: 'Delete Chats' },
+
+    { key: 'agent:read', name: 'Read Agents' },
+    { key: 'agent:create', name: 'Create Agents' },
+    { key: 'agent:update', name: 'Update Agents' },
+    { key: 'agent:delete', name: 'Delete Agents' },
+
     { key: 'job_desc:create', name: 'Create Job Description' },
     { key: 'job_desc:update', name: 'Update Job Description' },
     { key: 'job_desc:read', name: 'Read Job Description' },
     { key: 'job_desc:delete', name: 'Delete Job Description' },
-  ];
+  ] as const;
 
-  await prisma.permissions.createMany({ data: permissionsData });
+  await prisma.permissions.createMany({ data: [...permissionsData] });
+
+  type PermissionKey = (typeof permissionsData)[number]['key'];
+
+  type PermissionIds = {
+    [k in PermissionKey]: number;
+  };
 
   const insertedPermissions = await prisma.permissions.findMany();
-  const permissionIds = Object.fromEntries(insertedPermissions.map((p) => [p.key, p.id]));
+  const permissionIds = Object.fromEntries(insertedPermissions.map((p) => [p.key, p.id])) as PermissionIds;
 
   // --- Insert Users ---
   const [clientPass, adminPass] = await Promise.all([bcrypt.hash('client_pass', 10), bcrypt.hash('admin_pass', 10)]);
@@ -103,6 +119,16 @@ async function main() {
       { role_id: roleIds.Client, permission_id: permissionIds['cv:read_analyze'] },
       { role_id: roleIds.Client, permission_id: permissionIds['cv:single_analyze'] },
       { role_id: roleIds.Client, permission_id: permissionIds['cv:bulk_analyze'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:delete'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:delete'] },
 
       // Admin Permissions
       { role_id: roleIds.Admin, permission_id: permissionIds['client:read'] },

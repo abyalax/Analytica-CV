@@ -13,13 +13,13 @@ import { Flex } from './flex';
 import { Header } from './header';
 import { Main } from './main';
 
-interface PageScreenProps extends PropsWithChildren {
+interface Props extends PropsWithChildren {
   title: string;
   breadcrumbs: BreadcrumbProps[];
   topActions?: ReactNode;
 }
 
-export const PageScreen: FC<PageScreenProps> = ({ title, breadcrumbs, children, topActions }) => {
+export const PageScreen: FC<Props> = ({ title, breadcrumbs, children, topActions }) => {
   return (
     <SidebarProvider>
       <SidebarApp />

@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { PERMISSIONS } from '~/common/const/permission';
 import { MetaRequest, SortOrder } from '~/common/types/meta';
 import { PageScreen } from '~/components/layouts/page';
 import { getQueryClient } from '~/lib/query/client';
@@ -14,7 +13,6 @@ export const metadata: Metadata = {
   keywords: 'cv, ats, etc',
 };
 
-export const permissions = [PERMISSIONS.CLIENT.READ_CV];
 const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',

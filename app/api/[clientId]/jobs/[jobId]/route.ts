@@ -4,8 +4,6 @@ import { NotFoundException } from '~/lib/handler/error';
 import { safeHandler } from '~/lib/handler/safe-handler';
 import { jobService } from '~/modules/jobs/jobs.service';
 
-export const permissions = [];
-
 export const GET = safeHandler<ClientJobParams>(async (_, { params }) => {
   const { clientId, jobId } = await params;
   const data = await jobService.findByID(Number(clientId), Number(jobId));

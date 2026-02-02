@@ -2,6 +2,7 @@
   "name": "boilerplate-nodejs-next",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "permissions:generate": "env-cmd -f .env npx tsx scripts/generate-route-permissions.ts",
     "permissions:watch": "env-cmd -f .env npx tsx scripts/generate-route-permissions.ts --watch",

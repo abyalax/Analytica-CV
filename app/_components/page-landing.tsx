@@ -2,25 +2,24 @@
 
 import { ArrowRight, BarChart3, Brain, CheckCircle, Sparkles, Upload } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { useSession } from 'next-auth/react';
+// import { useEffect } from 'react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Footer } from '~/components/ui/footer';
 import { Navbar } from '~/components/ui/navbar';
-import { url } from '~/lib/utils/converter';
+// import { url } from '~/lib/utils/converter';
 import { navigationGuest } from '../navigation';
 
 export function PageLanding() {
-  const { status, data } = useSession();
-  const { push } = useRouter();
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <>
-  useEffect(() => {
-    if (status === 'authenticated') {
-      push(url('/[clientId]/dashboard', { clientId: String(data.user.id) }));
-    }
-  }, []);
+  // const { status, data } = useSession();
+  // const { push } = useRouter();
+  // useEffect(() => {
+  //   if (status === 'authenticated') {
+  //     push(url('/[clientId]/dashboard', { clientId: String(data.user.id) }));
+  //   }
+  // }, [data?.user.id, push, status]);
   return (
     <section className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <Navbar navigation={navigationGuest} />
@@ -43,7 +42,7 @@ export function PageLanding() {
               Sistem analisis CV yang terus belajar dan berkembang. Menggunakan RAG untuk hasil yang lebih akurat seiring waktu.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/login">
+              <Link href="/auth/login">
                 <Button size="lg" className="w-full sm:w-auto shadow-lg hover:shadow-xl transition-all">
                   Mulai Sekarang
                   <ArrowRight className="ml-2 h-4 w-4" />

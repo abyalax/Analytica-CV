@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
 import { url } from '~/lib/utils/converter';
 import { Component } from './_components';
@@ -10,7 +9,6 @@ export const metadata: Metadata = {
   keywords: 'cv, ats, etc',
 };
 
-export const permissions = [PERMISSIONS.CLIENT.READ_CV];
 const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',

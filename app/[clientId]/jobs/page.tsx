@@ -13,8 +13,6 @@ export const metadata: Metadata = {
   description: 'Manage Job Descriptions ',
 };
 
-export const permissions = [];
-
 const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',

@@ -1,6 +1,4 @@
 import { Metadata } from 'next';
-
-import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
 import { Button } from '~/components/ui/button';
 import { url } from '~/lib/utils/converter';
@@ -10,7 +8,6 @@ export const metadata: Metadata = {
   title: 'Dashboard',
 };
 
-export const permissions = [PERMISSIONS.CLIENT.READ_CV];
 const breadcrumbItems = (clientId: string) => [
   {
     title: 'Home',

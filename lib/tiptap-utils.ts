@@ -200,7 +200,7 @@ export function findNodePosition(props: {
 }): { pos: number; node: PMNode } | null {
   const { editor, node, nodePos } = props;
 
-  if (!editor || !editor.state?.doc) return null;
+  if (!editor?.state?.doc) return null;
 
   // Zero is valid position
   const hasValidNode = node !== undefined && node !== null;
@@ -216,7 +216,6 @@ export function findNodePosition(props: {
     let foundNode: PMNode | null = null;
 
     editor.state.doc.descendants((currentNode, pos) => {
-      // TODO: Needed?
       // if (currentNode.type && currentNode.type.name === node!.type.name) {
       if (currentNode === node) {
         foundPos = pos;

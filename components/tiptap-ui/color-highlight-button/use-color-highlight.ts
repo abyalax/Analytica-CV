@@ -1,18 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import { type Editor } from '@tiptap/react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-
-// --- Hooks ---
-import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
-import { useIsBreakpoint } from '~/hooks/use-is-breakpoint';
-
-// --- Lib ---
-import { isMarkInSchema, isNodeTypeSelected, isExtensionAvailable } from '~/lib/tiptap-utils';
-
 // --- Icons ---
 import { HighlighterIcon } from '~/components/tiptap-icons/highlighter-icon';
+import { useIsBreakpoint } from '~/hooks/use-is-breakpoint';
+// --- Hooks ---
+import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
+// --- Lib ---
+import { isExtensionAvailable, isMarkInSchema, isNodeTypeSelected } from '~/lib/tiptap-utils';
 
 export const COLOR_HIGHLIGHT_SHORTCUT_KEY = 'mod+shift+h';
 export const HIGHLIGHT_COLORS = [
@@ -184,9 +181,7 @@ export function shouldShowButton(props: { editor: Editor | null; hideWhenUnavail
 
   if (mode === 'mark') {
     if (!isMarkInSchema('highlight', editor)) return false;
-  } else {
-    if (!isExtensionAvailable(editor, ['nodeBackground'])) return false;
-  }
+  } else if (!isExtensionAvailable(editor, ['nodeBackground'])) return false;
 
   if (hideWhenUnavailable && !editor.isActive('code')) {
     return canColorHighlight(editor, mode);

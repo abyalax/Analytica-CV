@@ -22,6 +22,11 @@ export const PERMISSIONS = {
     CREATE_CV: 'cv:create',
     DELETE_CV: 'cv:delete',
 
+    READ_CHATS: 'chat:read',
+    UPDATE_CHATS: 'chat:update',
+    CREATE_CHATS: 'chat:create',
+    DELETE_CHATS: 'chat:delete',
+
     CREATE_JOBDESC: 'job_desc:create',
     READ_JOBDESC: 'job_desc:read',
     UPDATE_JOBDESC: 'job_desc:update',

@@ -39,7 +39,7 @@ export const POST = safeHandler<ClientParams>(async (req, { params }): TNextResp
     const newPath = path.join(uploadsDir, file.originalFilename ?? `${new Date().toString}`);
     fs.renameSync(file.filepath, newPath);
     // todo: upload ke cloud or whatever next plan development
-    uploadedFiles.push(`/uploads/${file.originalFilename ?? `${new Date().toString}`}`);
+    uploadedFiles.push(`/uploads/${file.originalFilename ?? new Date().toString}`);
   }
 
   const flatFiles = Object.values(files).flat();

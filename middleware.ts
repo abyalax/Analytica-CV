@@ -4,7 +4,7 @@ import { env } from './common/const/credential';
 import { routePermissions } from './lib/routes/permissions';
 import { matchPermission } from './lib/utils';
 
-const publicRoutes = new Set(['/auth/register', '/auth/login', '/auth/forgot-password', '/auth/reset-password']);
+const publicRoutes = new Set(['/', '/auth/register', '/auth/login', '/auth/forgot-password', '/auth/reset-password']);
 
 function getRequiredPermissions(pathname: string): string[] {
   if (routePermissions[pathname]) return routePermissions[pathname];
@@ -45,6 +45,7 @@ export async function middleware(req: NextRequest) {
     const hasPermission = requiredPermissions.every((p) => matchPermission(userPermissions, p));
     console.log(`🛡️  pass middleware: `, hasPermission);
     if (!hasPermission) {
+      console.log(req.url);
       loginUrl = new URL('/auth/login', req.url);
       loginUrl.searchParams.set('callbackUrl', req.url);
       return NextResponse.redirect(loginUrl);
@@ -52,6 +53,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     console.dir((error as Error).message);
+    console.log(req.url);
     loginUrl = new URL('/auth/login', req.url);
     loginUrl.searchParams.set('callbackUrl', req.url);
     return NextResponse.redirect(loginUrl);
